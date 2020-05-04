@@ -1,0 +1,30 @@
+{
+    "manifest_version": 2,
+ 
+    "name": "JiraIQB",
+    "description": "JiraIQB",
+    "version": "1.0",
+    "author": "Emad Elmogy",
+    "browser_action": {
+        "default_icon": "icon-5980.jpg",
+        "default_popup": "popup.html",
+        "default_title": "My custom google Extension"
+    },
+    "permissions": [
+        "storage",
+        "activeTab",
+        "http://localhost/*",
+        "https://jira.devfactory.com/*",
+        "http://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com/*",
+        "https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com/*",
+        "https://private.central-eks.aureacentral.com/*"
+     ],
+    "content_scripts": [
+        {
+            "matches": ["https://jira.devfactory.com/browse/*"],
+            "css": ["myStyles.css"],
+            "js": ["jquery-3.4.1.min.js","inject.js","diff.min.js"]
+        }
+    ]
+
+}

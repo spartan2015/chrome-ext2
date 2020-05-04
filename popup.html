@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <title>FS</title>
+    <script src="jquery-3.4.1.min.js"></script>
+    <script src="popup.js"></script>
+</head>
+<style type="text/css">
+    body {
+        margin: 5px;
+        width: 600px;
+    }
+
+    h1 {
+        font-size: 15px;
+        text-align: center;
+    }
+    button{
+        margin: 5px;
+    }
+</style>
+<body>
+    <div>
+        <div>Checks</div>
+        <div>
+            <button id="e2eCheck">E2E</button>
+        </div>
+
+        <div>QE Review</div>
+        <div>
+            <button id="qeApprove">Approve</button>
+            <button id="qeComment">Comment</button>
+            <button id="qeReject">Reject</button>
+        </div>
+
+        <div>AU Review</div>
+        <div>
+            <button id="auApprove">Approve</button>
+            <button id="auReject">Reject</button>
+        </div>
+
+        <div>Epic Review</div>
+        <div>
+            <button id="epicApprove">Approve</button>
+            <button id="epicReject">Reject</button>
+        </div>
+    </div>
+
+    <div class="requestsLog"></div>
+
+</body>
+
+
+</html>

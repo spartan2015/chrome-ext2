@@ -1,0 +1,8 @@
+# THIS IS CHROME TAB
+div#display{
+    width: 600px;
+}
+
+#actual{
+ border: 1px solid black;
+}
