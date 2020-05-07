@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
  
-    "name": "JiraIQB",
+    "name": "JiraIQB2",
     "description": "JiraIQB",
     "version": "1.0",
-    "author": "Emad Elmogy",
+    "author": "me",
     "browser_action": {
         "default_icon": "icon-5980.jpg",
         "default_popup": "popup.html",
@@ -14,16 +14,19 @@
         "storage",
         "activeTab",
         "http://localhost/*",
+        "https://localhost/*",
         "https://jira.devfactory.com/*",
         "http://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com/*",
         "https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com/*",
-        "https://private.central-eks.aureacentral.com/*"
+        "https://private.central-eks.aureacentral.com/*",
+        "https://confluence.devfactory.com/*",
+        "https://pca-unit-gw.private.central-eks.aureacentral.com/*"
      ],
     "content_scripts": [
         {
             "matches": ["https://jira.devfactory.com/browse/*"],
             "css": ["myStyles.css"],
-            "js": ["jquery-3.4.1.min.js","inject.js","diff.min.js"]
+            "js": ["jquery-3.4.1.min.js","inject.js","diff.min.js","js-yaml.js","jquery.stream-1.2.js"]
         }
     ]
 
