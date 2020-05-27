@@ -1,11 +1,15 @@
 $(document).ready(function () {
 
+    let log = function (data) {
+        $('.requestsLog').append(`<div>${data}</div>`)
+    }
 
     function getHtmlLink(href, name) {
         return `<a target="_blank" href="${href}">${name}</a>`;
     }
 
-    document.getElementById("e2eCheck").addEventListener('click', function () {
+
+    $( document ).on( "click", "#e2eCheck", {}, function () {
         let key = $(".issue-link").attr("data-issue-key");
         //window.open(`http://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`);
         let e2eCheckUrl = `https://localhost/get?url=https://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`;
