@@ -17,7 +17,7 @@ function getLocalStorageElement(key) {
 
 $(document).ready(function () {
 
-    $("a.issue-link").attr("target","_blank")
+    $("a.issue-link").attr("target", "_blank")
     $("a.issue-link").append("<button onclick=' window.prompt(`Copy to clipboard: Ctrl+C, Enter`, this.parentElement.innerText); return false;'>CP</button>")
 
     console.log("IQB - LOADED");
@@ -55,14 +55,22 @@ $(document).ready(function () {
             <button id="auApprove">AU Approve</button>
         </div>
 
+      <div>
+           <select id="endpoint">
+              <option value="https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com">aurea</option>
+              <option value="http://localhost:8080">local</option>
+           </select>
+      </div>  
+
       <div>My Checks:
+      
         <button id="e2eCheck">E2E</button>
         <button id="qeCheckFQA">Check FQA</button>
         <button id="qeCheckAU">Check AU</button>
         <button id="qeCheckFSTC">Check FSTC</button>
         <button id="qeCheckCR">Check CR-Defect</button>
       </div>
-            
+         
       <div>FQA Review</div>
       <div>
          <button id="fqaApprove">Approve</button>
@@ -124,7 +132,7 @@ $(document).ready(function () {
             log(actionName + ": " + key);
             let prefix = '';
             if (!endpointPattern.startsWith("http")) {
-                prefix = 'https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com';
+                prefix = $("#endpoint").val();//'https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com'
             }
 
             if (method == 'GET') {
@@ -145,8 +153,6 @@ $(document).ready(function () {
 
         }, false);
     }
-
-
 
 
     attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
