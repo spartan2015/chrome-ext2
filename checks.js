@@ -13,6 +13,7 @@ $(document).ready(function () {
     let isE2EMandatory = $("strong[title='E2E mandatory on code review']").siblings('div') && $("strong[title='E2E mandatory on code review']").siblings('div').text().trim() == 'Yes';
     let noTestedByLink = !$("a.issue-link", $("dt[title='tested by']").siblings("dd")).length;
 
+    console.error("checks here")
     if (isNotFqa && isE2EMandatory && noTestedByLink
     ) {
         console.error("Error here")
