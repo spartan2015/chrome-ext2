@@ -26,7 +26,7 @@
         {
             "matches": ["https://jira.devfactory.com/browse/*"],
             "css": ["myStyles.css"],
-            "js": ["jquery-3.4.1.min.js","checks.js","exists.js","inject.js","e2e.js","diff.min.js","js-yaml.js","jquery.stream-1.2.js"]
+            "js": ["jquery-3.4.1.min.js","video.js","checks.js","exists.js","inject.js","e2e.js","diff.min.js","js-yaml.js"]
         },
         {
             "matches": ["https://github.com/*"],

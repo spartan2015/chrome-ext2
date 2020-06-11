@@ -28,6 +28,8 @@ $(document).ready(function () {
     if (hasNoAuth()) {
         let user = prompt("username");
         let pass = prompt("pass");
+        localStorage['jiraUser']=user
+        localStorage['jiraPass']=pass
         localStorage[authKey] = btoa(`${user}:${pass}`)
     }
 

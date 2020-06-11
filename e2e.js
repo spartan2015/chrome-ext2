@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    console.error("e2e link")
+
     let log = function (data) {
         $('.requestsLog').append(`<div>${data}</div>`)
     }
