@@ -14,7 +14,7 @@ $(document).ready(function () {
     $( document ).on( "click", "#e2eCheck", {}, function () {
         let key = $(".issue-link").attr("data-issue-key");
         //window.open(`http://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`);
-        let e2eCheckUrl = `https://localhost/get?url=https://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`;
+        let e2eCheckUrl = `https://localhost:8443/get?url=https://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`;
         log(getHtmlLink(e2eCheckUrl, 'E2E'))
 
         let e2ePromise = new Promise((resolve, reject) => {
