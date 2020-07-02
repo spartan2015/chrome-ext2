@@ -51,6 +51,8 @@ $(document).ready(function () {
         <div>
             <button id="assignMe">AssignMe</button>
             <button id="assignDiaz">AssignDiaz</button>
+            <button id="myFqaApprove">FQA Approve</button>
+            <button id="myFqaReject">FQA Reject</button>
             <br/>
             <button id="crApprove">CR Approve</button>
             <br/>
@@ -64,7 +66,7 @@ $(document).ready(function () {
            </select>
       </div>  
 
-      <div>My Checks:
+      <div>Checks:
       
         <button id="e2eCheck">E2E</button>
         <button id="qeCheckFQA">Check FQA</button>
@@ -162,6 +164,8 @@ $(document).ready(function () {
     attach('GET', 'crApprove', "crApprove", 'http://localhost:3000/cr-approve?key=${key}')
     attach('GET', 'auApprove', "auApprove", 'http://localhost:3000/au-approve?key=${key}')
 
+    attach('GET', 'fs Approve', "myFqaApprove", 'http://localhost:3000/fs?key=${key}')
+    attach('GET', 'fs Reject', "myFqaReject", 'http://localhost:3000/fs-reject?key=${key}')
 
     attach('GET', 'check fqa', "qeCheckFQA", '/check/aufeaturereview?issueKey=${key}&jiraUser=${jiraUser}')
     attach('GET', 'check au', "qeCheckAU", '/check/audocreview?issueKey=${key}&jiraUser=${jiraUser}')
