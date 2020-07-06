@@ -243,17 +243,7 @@ $(document).ready(function () {
 
      */
 
-    myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {
-        let obj = $(e.target).parents("div.TimelineItem");
-        console.log($("div.inline-comment-form", obj));
-        $("div.inline-comment-form", obj).append(`
-                     <div>
-                            <input style="width:100px;" type="text" class="iqb-searchBox"/>
-                            <div id="iqb-searchBoxResults"></div>
-                            <button class="iqb-close">[Closed]</button>
-                    </div>
-                `)
-    })
+
 
     let addIqbInput = function (e) {
         console.log(e.target);
@@ -271,13 +261,32 @@ $(document).ready(function () {
 
     // ==================== EVENTS
 
+
     myjQuery('body').on("click", "button.iqb-close", function () {
         let textareaEl = myjQuery("textarea",
             $(event.target).parents("tr.js-inline-comments-container"));
+        if (!textareaEl.length)
+            textareaEl =  myjQuery("textarea",
+                $(event.target).parents("div.TimelineItem"));
+
         textareaEl
             .val("[closed]")
         textareaEl.form.submit();
     })
+
+
+    myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {
+        let obj = $(e.target).parents("div.TimelineItem");
+        console.log($("div.inline-comment-form", obj));
+        $("div.inline-comment-form", obj).append(`
+                     <div>
+                            <input style="width:100px;" type="text" class="iqb-searchBox"/>
+                            <div id="iqb-searchBoxResults"></div>
+                            <button class="iqb-close">[Closed]</button>
+                    </div>
+                `)
+    })
+
 
     console.error("github-checks")
     myjQuery("body").on("keypress", "input.iqb-searchBox", (event) => {
