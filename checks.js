@@ -35,9 +35,10 @@ $(document).ready(function () {
         })
             .each((index, e2eDef) => {
                 let e2eDefName = $("a.issue-link", e2eDef).attr("data-issue-key");
-                let noDemoLinkWithSameName = !$("a.issue-link", $("dt[title='links to']").siblings("dd"))
-                    .filter(e => {
-                        $(`a[data-issue-key=${e2eDefName}]`, e)
+                let noDemoLinkWithSameName = !
+                   $("dt[title='links to']").siblings("dd")
+                    .filter((i,e) => {
+                        return $(`a[data-issue-key=${e2eDefName}]`, e).length > 0
                     });
                 if (noDemoLinkWithSameName.length == 0) {
                     log(`demo not found for ${e2eDefName}`)
