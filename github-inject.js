@@ -231,9 +231,9 @@ $(document).ready(function () {
         "87": "If a demo is of an automated E2E, PR where it executed and E2E it refers to, is visible.",
         "88": "There is a demo timestamp, and it is of the same day, as the PR last commit."
     }
-/*
+    /*
 
-* */
+    * */
     /*$('body').append(`
                 <div style="max-width:500px; max-height:500px;position:fixed; left: 0; top: 300px; overflow: auto">
                 <input style="width:100px;" type="text" id="iqb-searchBox"/>
@@ -243,25 +243,35 @@ $(document).ready(function () {
 
      */
 
-    myjQuery('button.review-thread-reply-button').click(function(e){
-        let obj = $(e.target).parents("tr.js-inline-comments-container");
-
-        if (obj.hasClass("js-inline-comments-container")){
-            //if (!obj.attr("set-my-data")){
-            obj.attr("set-my-data","true")
-            console.log($("div.inline-comment-form",obj));
-            $("div.inline-comment-form",obj).append(`
+    myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {
+        let obj = $(e.target).parents("div.TimelineItem");
+        console.log($("div.inline-comment-form", obj));
+        $("div.inline-comment-form", obj).append(`
                      <div>
                             <input style="width:100px;" type="text" class="iqb-searchBox"/>
                             <div id="iqb-searchBoxResults"></div>
                             <button class="iqb-close">[Closed]</button>
                     </div>
                 `)
-            //}
-        }
     })
 
-    myjQuery('body').on("click","button.iqb-close",function(){
+    let addIqbInput = function (e) {
+        console.log(e.target);
+        let obj = $(e.target);
+        console.log($("div.inline-comment-form", obj));
+        $("div.inline-comment-form", obj).append(`
+                     <div>
+                            <input style="width:100px;" type="text" class="iqb-searchBox"/>
+                            <div id="iqb-searchBoxResults"></div>
+                    </div>
+                `)
+    };
+    myjQuery('body').on('DOMNodeInserted', 'div.TimelineItem', addIqbInput);
+    myjQuery('body').on('DOMNodeInserted', 'tr.js-inline-comments-container', addIqbInput);
+
+    // ==================== EVENTS
+
+    myjQuery('body').on("click", "button.iqb-close", function () {
         let textareaEl = myjQuery("textarea",
             $(event.target).parents("tr.js-inline-comments-container"));
         textareaEl
@@ -269,33 +279,8 @@ $(document).ready(function () {
         textareaEl.form.submit();
     })
 
-    myjQuery('body').on('DOMNodeInserted', 'tr', function (e) {
-     console.log(e.target);
-     //if (e.target.nodeName =="tr"){
-         let obj = $(e.target);
-         if (obj.hasClass("js-inline-comments-container")){
-             //if (!obj.attr("set-my-data")){
-                 obj.attr("set-my-data","true")
-                 console.log($("div.inline-comment-form",obj));
-                 $("div.inline-comment-form",obj).append(`
-                     <div>
-                            <input style="width:100px;" type="text" class="iqb-searchBox"/>
-                            <div id="iqb-searchBoxResults"></div>
-                    </div>
-                `)
-             //}
-         }
-     //}
-   /* $(e.target).append(`
-         <div>
-                <input style="width:100px;" type="text" class="iqb-searchBox"/>
-                <div id="iqb-searchBoxResults"></div>
-        </div>
-    `);*/
-});
-
     console.error("github-checks")
-    myjQuery("body").on("keypress","input.iqb-searchBox",(event) => {
+    myjQuery("body").on("keypress", "input.iqb-searchBox", (event) => {
         if (event.charCode == 13) {
             let searchValue = event.currentTarget.value;
             console.log(event);
@@ -307,12 +292,12 @@ $(document).ready(function () {
                 }
             });
 
-           /* myjQuery("body").on("click","button.CP",e=>{
-                window.prompt('Ctrl+C, Enter', e.target.nextElementSibling.innerText); return false;
-            })*/
+            /* myjQuery("body").on("click","button.CP",e=>{
+                 window.prompt('Ctrl+C, Enter', e.target.nextElementSibling.innerText); return false;
+             })*/
 
             let response = result.join("<br/>");
-            myjQuery("textarea",$(event.target.parentElement.parentElement)).val(response)
+            myjQuery("textarea", $(event.target.parentElement.parentElement)).val(response)
 
             console.log(response)
             /*myjQuery("#iqb-searchBoxResults", $(this.parent)).html(
