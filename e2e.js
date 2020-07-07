@@ -53,7 +53,7 @@ $(document).ready(function () {
         let promises = [];
         promises.push(e2ePromise);
 
-        jQuery("a[href*=confluence]")
+        jQuery("a[href*='confluence.devfactory.com/pages']")
             //.filter(":contains('Environment')")
             .each((index, link) => {
                 let url = link.href;
@@ -74,7 +74,7 @@ $(document).ready(function () {
                             }
                         })
                         .catch(function (e) {
-                            log("error loading yaml" + getHtmlLink(checkYamlUrl, 'Yaml'));
+                            log("error loading yaml" + getHtmlLink(checkYamlUrl, 'Yaml') + " " + checkYamlUrl);
                             console.log(e);
                         })
                 );

@@ -276,7 +276,10 @@ $(document).ready(function () {
 
 
     myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {
-        let obj = $(e.target).parents("div.TimelineItem");
+        let obj = $(e.target).parents("tr.js-inline-comments-container");
+        if (!obj.length){
+            obj = $(e.target).parents("div.TimelineItem");
+        }
         console.log($("div.inline-comment-form", obj));
         $("div.inline-comment-form", obj).append(`
                      <div>

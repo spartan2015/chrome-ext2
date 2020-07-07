@@ -9,14 +9,25 @@ function exists(path, object) {
     }
     if (Array.isArray(object)) {
         return object.some(item => {
-            return (item['name'] == path[0].trim() || item['group'] == path[0].trim() || item['id'] == path[0].trim()
+            return (item['name'] == path[0].trim() || item['type'] == path[0].trim() || item['group'] == path[0].trim() || item['id'] == path[0].trim()
             ) && (path.length == 1 || exists(path.slice(1), item)
                 || (item && item.selectors && exists(path.slice(1), item.selectors))
             );
         })
     } else {
-        let item = object[path[0]];
-        return (object.hasOwnProperty(path[0].trim()) || object['name'] == path[0].trim() || object['group'] == path[0].trim() || object['id'] == path[0].trim()) && (path.length == 1 ||
+        let item = undefined; // how do you get the object where this is true ?
+        let objectIs = object.hasOwnProperty(path[0].trim()) ||
+            object['type'] == path[0].trim() ||
+            object['name'] == path[0].trim() ||
+            object['group'] == path[0].trim() ||
+            object['id'] == path[0].trim();
+        if (objectIs){
+            item = object;
+        }else{
+            item = object[path[0]]
+        }
+        return objectIs
+            && (path.length == 1 ||
             exists(path.slice(1), item)
             || (item && item.selectors && exists(path.slice(1), item.selectors))
 
