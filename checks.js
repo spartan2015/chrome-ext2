@@ -30,6 +30,17 @@ $(document).ready(function () {
 
         let noTestedByLink = !testedBy.length;
 
+        testedBy.each((e,e2eDef)=>{
+            let e2eDefName = $("a.issue-link", e2eDef).attr("data-issue-key");
+            console.log(e2eDefName);
+            $(`a:contains(${e2eDefName})`, $("dt[title='links to']").siblings("dd")).each((i,e)=>{
+                console.log(e.innerText);
+                if (e.innerText == e2eDefName) {
+                   $(e).css("color", "red").css("font-weight","bolder");
+                }
+            });
+        });
+
         testedBy.filter((i,e) => {
             return $("li.status", e).text().trim().toUpperCase() == 'E2E DEFINITION'
         })
