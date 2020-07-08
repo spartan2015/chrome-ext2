@@ -52,9 +52,45 @@ $(document).ready(function () {
         Rejection reason: mapped item not present in description: 
     </div>  
     <button class="iqb-cp" onclick="window.prompt('Copy to clipboard: Ctrl+C, Enter', document.querySelector('div.iqb-not-found').innerText); return false;">CP</button>
+    <button class="iqb-map">Map</button>
     <button class="iqb-reject">Reject</button>
     <button class="iqb-approve">Approve</button>
 `);
+
+    $("button.iqb-map").click(function () {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+
+        xhr.open('GET', 'http://localhost:3000/fs-mapping?key=' + key + (false ? "&full=true" : ""), true);
+
+        xhr.addEventListener("load", function (e) {
+            console.log("response text: ")
+            console.log(xhr.responseText);
+
+
+            try {
+                var result = xhr.responseText.replace(/`/gm, "'");//.replace(/(\r\n|\n|\r)/gm, "<br/>");
+                highlight(result)
+
+            } catch (ex) {
+                alert(ex);
+            }
+
+
+        }, false);
+
+
+        xhr.send();
+
+    });
 
     $("button.iqb-reject").click(function () {
         var key =  getJiraTicket();
@@ -65,13 +101,12 @@ $(document).ready(function () {
 
         xhr.addEventListener("error", function (error) {
             alert('Error executing: ' + JSON.stringify(xhr));
-        });
-        let message = `(x) [QE FQA Review|${sheetLink}]
-        
+        });//(x) [QE FQA Review|${sheetLink}]
+        let message = `        
         |FS title, description and other fields are coherent with feature story scope (defined by the mapping)\t|no|\t${document.querySelector('div.iqb-not-found').innerText}|
         `;
         console.log(message)
-       /xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
+       xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
         xhr.send();
 
     });
