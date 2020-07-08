@@ -71,7 +71,7 @@ $(document).ready(function () {
         |FS title, description and other fields are coherent with feature story scope (defined by the mapping)\t|no|\t${document.querySelector('div.iqb-not-found').innerText}|
         `;
         console.log(message)
-       // xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
+       /xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
         xhr.send();
 
     });
@@ -87,7 +87,7 @@ $(document).ready(function () {
             alert('Error executing: ' + JSON.stringify(xhr));
         });
 
-         xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
+        xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
         xhr.send();
 
     });
