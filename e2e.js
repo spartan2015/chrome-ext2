@@ -53,9 +53,8 @@ $(document).ready(function () {
         let promises = [];
         promises.push(e2ePromise);
 
-        jQuery("a[href*='confluence.devfactory.com/pages']")
-            //.filter(":contains('Environment')")
-            .each((index, link) => {
+        function forEachConfluencePage(jquerySelector){
+            jquerySelector.each((index, link) => {
                 let url = link.href;
                 let encodedUrl = encodeURIComponent(url);
                 let checkYamlUrl = `https://private.central-eks.aureacentral.com/pca-qe/api/ticketservice/envDs/yaml?url=${encodedUrl}`;
@@ -78,28 +77,11 @@ $(document).ready(function () {
                             console.log(e);
                         })
                 );
-                /*promises.push(
-                    $.get("https://localhost:443/get?url=" + encodedUrl)
-                        .then((data, s, x) => {
-                            getBody(encodedUrl, data).then(body=>{
-                                let div = document.createElement("div");
-                                div.innerHTML = body;
-                                let code = div.innerText.replace(/↵/g, "\n");
-
-                                try {
-                                    let doc = jsyaml.load(code);
-                                    docs.push(doc);
-                                } catch (e) {
-                                    log("failed loading doc, check console");
-                                    log(e);
-                                    console.log(body)
-                                }
-                            });
-                        }).catch(function (xhr) {
-                        log("error loading xhr");
-                        console.log(xhr)
-                    }));*/
             })
+        }
+
+        forEachConfluencePage(jQuery("a[href*='confluence.devfactory.com/pages']"))
+        forEachConfluencePage(jQuery("a[href*='confluence.devfactory.com/display']"))
 
         Promise.all(promises).then(r => {
             analyzeReferences(docs);
