@@ -49,6 +49,7 @@ $(document).ready(function () {
       
 
         <div>
+            <button id="directAssignMe">DirectAssigneMe</button>
             <button id="assignMe">AssignMe</button>
             <button id="assignDiaz">AssignDiaz</button>
             <button id="myFqaApprove">FQA Approve</button>
@@ -131,8 +132,12 @@ $(document).ready(function () {
     function attach(method, actionName, elementId, endpointPattern) {
         document.getElementById(elementId).addEventListener('click', function () {
             let key = $(".issue-link").attr("data-issue-key");
-            endpointPattern = endpointPattern.replace("${key}", key)
+            endpointPattern = endpointPattern.replace("${mainIssueKey}", location.href.substr(location.href.lastIndexOf("/")+1))
+            endpointPattern = endpointPattern.replace("${mainIssueType}", $("span#type-val").text().trim())
+            endpointPattern = endpointPattern.replace("${mainIssueStatus}", $("span#status-val").text().trim())
+            endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i,e)=>$("td.status",e).text().trim()=='In Review' && $("td.issuetype img",e).attr("alt")=='QE Review').attr("data-issuekey"))
             endpointPattern = endpointPattern.replace("${jiraUser}", getLocalStorageElement(jiraUserKey));
+
             log(actionName + ": " + key);
             let prefix = '';
             if (!endpointPattern.startsWith("http")) {
@@ -157,6 +162,9 @@ $(document).ready(function () {
 
         }, false);
     }
+
+    attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
+    attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue&toUser=dsaldiaz')
 
 
     attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
