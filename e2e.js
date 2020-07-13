@@ -10,10 +10,8 @@ $(document).ready(function () {
         return `<a target="_blank" href="${href}">${name}</a>`;
     }
 
-
     $( document ).on( "click", "#e2eCheck", {}, function () {
         let key = $(".issue-link").attr("data-issue-key");
-        //window.open(`http://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`);
         let e2eCheckUrl = `https://localhost:8443/get?url=https://private.central-eks.aureacentral.com/pca-qe/api/review/${key}`;
         log(getHtmlLink(e2eCheckUrl, 'E2E'))
 
@@ -90,8 +88,6 @@ $(document).ready(function () {
 
     }, false);
 
-//attach('GET','check e2e', "e2eCheck", 'https://private.central-eks.aureacentral.com/pca-qe/api/review/${key}&jiraUser=${jiraUser}')
-
     function getBody(title, content) {
         test = content;    // to eliminate case sensitivity
         let x = test.indexOf("<pre class=\"syntaxhighlighter-pre\"");
@@ -101,21 +97,11 @@ $(document).ready(function () {
                 let encodedUrl = title;
                 let checkYamlUrl = `https://private.central-eks.aureacentral.com/pca-qe/api/ticketservice/envDs/yaml?url=${encodedUrl}`;
                 $.get(checkYamlUrl).then(d => resolve(d)).fail(e => log(e));
-                /* let startBlock = `<div id="main-content" class="wiki-content">`;
-                 x = test.indexOf(startBlock);
-                 if (x < 0) {
-                     log(`Could not find page start codeblock for ${title}. Aborting`);
-                     return "";
-                 }
-                 x = x + startBlock.length;
-                 y = test.indexOf("</div>↵↵        <!--↵<rdf")
-                 return content.slice(x + 1, y);*/
+
             } else {
-                /*var y = test.lastIndexOf(`</pre>
-                    </div></div>`);*/
+
                 y = test.lastIndexOf(`</pre>\n</div></div>`);
-                /*   if (!y)
-                       y = test.lastIndexOf(`</pre>\n\r</div></div>`);*/
+
                 if (!y) {
                     log("COULD NOT FIND END OF DATA for: " + title);
                     return ""
