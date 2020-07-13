@@ -15,40 +15,44 @@ function getLocalStorageElement(key) {
 }
 
 
-$(document).ready(function () {
+function initializeMenu() {
 
-    $("a.issue-link").attr("target", "_blank")
-    $("a.issue-link").append("<button onclick=' window.prompt(`Copy to clipboard: Ctrl+C, Enter`, this.parentElement.innerText); return false;'>CP</button>")
-
-    console.log("IQB - LOADED");
-    let log = function (data) {
-        $('.requestsLog').append(`<div>${data}</div>`)
-    }
-
-    if (hasNoAuth()) {
-        let user = prompt("username");
-        let pass = prompt("pass");
-        localStorage['jiraUser']=user
-        localStorage['jiraPass']=pass
-        localStorage[authKey] = btoa(`${user}:${pass}`)
-    }
-
-    $.ajaxSetup({
-        headers: {
-            Accept: "application/json,text/html",
-            Authorization: `Basic ${localStorage[authKey]}`
+        if ($("iqb-menu").length == 1){
+            return
         }
-    });
+
+        $("a.issue-link").attr("target", "_blank")
+        $("a.issue-link").append("<button onclick=' window.prompt(`Copy to clipboard: Ctrl+C, Enter`, this.parentElement.innerText); return false;'>CP</button>")
+
+        console.log("IQB - LOADED");
+        let log = function (data) {
+            $('.requestsLog').append(`<div>${data}</div>`)
+        }
+
+        if (hasNoAuth()) {
+            let user = prompt("username");
+            let pass = prompt("pass");
+            localStorage['jiraUser'] = user
+            localStorage['jiraPass'] = pass
+            localStorage[authKey] = btoa(`${user}:${pass}`)
+        }
+
+        $.ajaxSetup({
+            headers: {
+                Accept: "application/json,text/html",
+                Authorization: `Basic ${localStorage[authKey]}`
+            }
+        });
 
 
-    /*
-    https://docs.google.com/document/d/1VPA99yebFMqM1FLwn7GHuTXlpR7RqDVbmZM6035WzQI/edit#heading=h.i35a9q1rqui4
-    */
+        /*
+        https://docs.google.com/document/d/1VPA99yebFMqM1FLwn7GHuTXlpR7RqDVbmZM6035WzQI/edit#heading=h.i35a9q1rqui4
+        */
 
-    $('.aui-toolbar2-primary').append(`
+        $('.aui-toolbar2-primary').append(`
       
 
-        <div>
+        <div class="iqb-menu">
             <button id="directAssignMe">DirectAssigneMe</button>
             <button id="directAssignDsaldiaz>DirectAssigneDsaldiaz</button>
             <button id="assignMe">AssignMe</button>
@@ -108,100 +112,104 @@ $(document).ready(function () {
             <div class="requestsLog"></div>
         </div>
 `)
-    /*
-        $( document ).ajaxError(function(jqXHR, textStatus, errorThrown) {
-            log(jqXHR.responseText);
-            log('Error occurred: '+ jqXHR.statusText + ' ' + jqXHR.status);
-            log(jqXHR.responseJSON)
-        });*/
-    $.postJSON = function (url, data, callback) {
-        return jQuery.ajax({
-            'type': 'POST',
-            'url': url,
-            'contentType': 'application/json',
-            'data': JSON.stringify(data),
-            'dataType': 'text',
-            'success': callback
-        });
-    };
+        /*
+            $( document ).ajaxError(function(jqXHR, textStatus, errorThrown) {
+                log(jqXHR.responseText);
+                log('Error occurred: '+ jqXHR.statusText + ' ' + jqXHR.status);
+                log(jqXHR.responseJSON)
+            });*/
+        $.postJSON = function (url, data, callback) {
+            return jQuery.ajax({
+                'type': 'POST',
+                'url': url,
+                'contentType': 'application/json',
+                'data': JSON.stringify(data),
+                'dataType': 'text',
+                'success': callback
+            });
+        };
 
 
-    document.getElementById("resetAuth").addEventListener('click', function () {
-        delete localStorage[authKey];
-    }, false);
-
-    function attach(method, actionName, elementId, endpointPattern) {
-        document.getElementById(elementId).addEventListener('click', function () {
-            let key = $(".issue-link").attr("data-issue-key");
-            endpointPattern = endpointPattern.replace("${mainIssueKey}", location.href.substr(location.href.lastIndexOf("/")+1))
-            endpointPattern = endpointPattern.replace("${mainIssueType}", $("span#type-val").text().trim())
-            endpointPattern = endpointPattern.replace("${mainIssueStatus}", $("span#status-val").text().trim())
-            endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i,e)=>$("td.status",e).text().trim()=='In Review' &&
-                ($("td.issuetype img",e).attr("alt")=='QE Review' || $("td.issuetype img",e).attr("alt")=='QE FQA Review')
-            )
-                .attr("data-issuekey"))
-            endpointPattern = endpointPattern.replace("${key}", key)
-            endpointPattern = endpointPattern.replace("${jiraUser}", getLocalStorageElement(jiraUserKey));
-
-            log(actionName + ": " + key);
-            let prefix = '';
-            if (!endpointPattern.startsWith("http")) {
-                prefix = $("#endpoint").val();//'https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com'
-            }
-
-            if (method == 'GET') {
-                $.get(`${prefix}${endpointPattern}`, function (data) {
-                    log(data);
-                }).fail(function (xhr) {
-                    log("error");
-                    console.log(xhr)
-                })
-            } else {
-                $.postJSON(`${prefix}${endpointPattern}`, function (data) {
-                    log(data);
-                }).fail(function (xhr) {
-                    log("error");
-                    console.log(xhr)
-                })
-            }
-
+        document.getElementById("resetAuth").addEventListener('click', function () {
+            delete localStorage[authKey];
         }, false);
-    }
 
-    attach('GET', 'directAssignMe', "directAssignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
-    attach('GET', 'directAssignDsaldiaz', "directAssignDsaldiaz", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue&toUser=dsaldiaz')
+        function attach(method, actionName, elementId, endpointPattern) {
+            document.getElementById(elementId).addEventListener('click', function () {
+                let key = $(".issue-link").attr("data-issue-key");
+                endpointPattern = endpointPattern.replace("${mainIssueKey}", location.href.substr(location.href.lastIndexOf("/") + 1))
+                endpointPattern = endpointPattern.replace("${mainIssueType}", $("span#type-val").text().trim())
+                endpointPattern = endpointPattern.replace("${mainIssueStatus}", $("span#status-val").text().trim())
+                endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i, e) => $("td.status", e).text().trim() == 'In Review' &&
+                    ($("td.issuetype img", e).attr("alt") == 'QE Review' || $("td.issuetype img", e).attr("alt") == 'QE FQA Review')
+                )
+                    .attr("data-issuekey"))
+                endpointPattern = endpointPattern.replace("${key}", key)
+                endpointPattern = endpointPattern.replace("${jiraUser}", getLocalStorageElement(jiraUserKey));
+
+                log(actionName + ": " + key);
+                let prefix = '';
+                if (!endpointPattern.startsWith("http")) {
+                    prefix = $("#endpoint").val();//'https://pa-qe-jirawf-api-prod.private.central-eks.aureacentral.com'
+                }
+
+                if (method == 'GET') {
+                    $.get(`${prefix}${endpointPattern}`, function (data) {
+                        log(data);
+                    }).fail(function (xhr) {
+                        log("error");
+                        console.log(xhr)
+                    })
+                } else {
+                    $.postJSON(`${prefix}${endpointPattern}`, function (data) {
+                        log(data);
+                    }).fail(function (xhr) {
+                        log("error");
+                        console.log(xhr)
+                    })
+                }
+
+            }, false);
+        }
+
+        attach('GET', 'directAssignMe', "directAssignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
+        attach('GET', 'directAssignDsaldiaz', "directAssignDsaldiaz", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue&toUser=dsaldiaz')
 
 
-    attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
-    attach('GET', 'assignDiaz', "assignDiaz", 'http://localhost:3000/assign?key=${key}&toUser=dsaldiaz')
-    attach('GET', 'crApprove', "crApprove", 'http://localhost:3000/cr-approve?key=${key}')
-    attach('GET', 'auApprove', "auApprove", 'http://localhost:3000/au-approve?key=${key}')
+        attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
+        attach('GET', 'assignDiaz', "assignDiaz", 'http://localhost:3000/assign?key=${key}&toUser=dsaldiaz')
+        attach('GET', 'crApprove', "crApprove", 'http://localhost:3000/cr-approve?key=${key}')
+        attach('GET', 'auApprove', "auApprove", 'http://localhost:3000/au-approve?key=${key}')
 
-    attach('GET', 'fs Approve', "myFqaApprove", 'http://localhost:3000/fs?key=${key}')
-    attach('GET', 'fs Reject', "myFqaReject", 'http://localhost:3000/fs-reject?key=${key}')
+        attach('GET', 'fs Approve', "myFqaApprove", 'http://localhost:3000/fs?key=${key}')
+        attach('GET', 'fs Reject', "myFqaReject", 'http://localhost:3000/fs-reject?key=${key}')
 
-    attach('GET', 'check fqa', "qeCheckFQA", '/check/aufeaturereview?issueKey=${key}&jiraUser=${jiraUser}')
-    attach('GET', 'check au', "qeCheckAU", '/check/audocreview?issueKey=${key}&jiraUser=${jiraUser}')
-    attach('GET', 'check fstc', "qeCheckFSTC", '/check/auepicreview?issueKey=${key}&jiraUser=${jiraUser}')
-    attach('GET', 'check cr', "qeCheckCR", '/check/codereview?issueKey=${key}&jiraUser=${jiraUser}')
+        attach('GET', 'check fqa', "qeCheckFQA", '/check/aufeaturereview?issueKey=${key}&jiraUser=${jiraUser}')
+        attach('GET', 'check au', "qeCheckAU", '/check/audocreview?issueKey=${key}&jiraUser=${jiraUser}')
+        attach('GET', 'check fstc', "qeCheckFSTC", '/check/auepicreview?issueKey=${key}&jiraUser=${jiraUser}')
+        attach('GET', 'check cr', "qeCheckCR", '/check/codereview?issueKey=${key}&jiraUser=${jiraUser}')
 
-    attach('POST', 'approve cr', "qeApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
-    attach('POST', 'comment cr', "qeComment", '/comments?action=rejectComments&issueKey=${key}&jiraUser=${jiraUser}')
-    attach('POST', 'reject cr', "qeReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'approve cr', "qeApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'comment cr', "qeComment", '/comments?action=rejectComments&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'reject cr', "qeReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
 
-    attach('POST', 'fqa au', "fqaApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
-    attach('POST', 'fqa au', "fqaReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
-
-
-    attach('POST', 'approve au', "auApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
-    attach('POST', 'reject au', "auReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
-
-    attach('POST', 'approve epic', "epicApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
-    attach('POST', 'reject epic', "epicReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'fqa au', "fqaApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'fqa au', "fqaReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
 
 
-})
+        attach('POST', 'approve au', "auApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'reject au', "auReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
 
+        attach('POST', 'approve epic', "epicApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
+        attach('POST', 'reject epic', "epicReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
+
+}
+
+$(document).ready(initializeMenu())
+
+setTimeout(initializeMenu, 2000)
+setTimeout(initializeMenu, 4000)
+setTimeout(initializeMenu, 6000)
 
 
 

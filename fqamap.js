@@ -57,6 +57,11 @@ $(document).ready(function () {
     <button class="iqb-approve">Approve</button>
 `);
 
+    function getEpicKey() {
+        let href= $("div#customfield_10002-val a").attr("href");
+        return href.substr(href.lastIndexOf("/")+1);
+    }
+
     $("button.iqb-map").click(function () {
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
@@ -69,7 +74,7 @@ $(document).ready(function () {
         });
 
 
-        xhr.open('GET', 'http://localhost:3000/fs-mapping?key=' + key + (false ? "&full=true" : ""), true);
+        xhr.open('GET', 'http://localhost:3000/fs-mapping?key=' + key + "&epic=" + getEpicKey()  + (false ? "&full=true" : ""), true);
 
         xhr.addEventListener("load", function (e) {
             console.log("response text: ")
