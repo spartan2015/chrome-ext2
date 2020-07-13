@@ -50,6 +50,7 @@ $(document).ready(function () {
 
         <div>
             <button id="directAssignMe">DirectAssigneMe</button>
+            <button id="directAssignDsaldiaz>DirectAssigneDsaldiaz</button>
             <button id="assignMe">AssignMe</button>
             <button id="assignDiaz">AssignDiaz</button>
             <button id="myFqaApprove">FQA Approve</button>
@@ -135,7 +136,11 @@ $(document).ready(function () {
             endpointPattern = endpointPattern.replace("${mainIssueKey}", location.href.substr(location.href.lastIndexOf("/")+1))
             endpointPattern = endpointPattern.replace("${mainIssueType}", $("span#type-val").text().trim())
             endpointPattern = endpointPattern.replace("${mainIssueStatus}", $("span#status-val").text().trim())
-            endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i,e)=>$("td.status",e).text().trim()=='In Review' && $("td.issuetype img",e).attr("alt")=='QE Review').attr("data-issuekey"))
+            endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i,e)=>$("td.status",e).text().trim()=='In Review' &&
+                ($("td.issuetype img",e).attr("alt")=='QE Review' || $("td.issuetype img",e).attr("alt")=='QE FQA Review')
+            )
+                .attr("data-issuekey"))
+            endpointPattern = endpointPattern.replace("${key}", key)
             endpointPattern = endpointPattern.replace("${jiraUser}", getLocalStorageElement(jiraUserKey));
 
             log(actionName + ": " + key);
@@ -163,8 +168,8 @@ $(document).ready(function () {
         }, false);
     }
 
-    attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
-    attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue&toUser=dsaldiaz')
+    attach('GET', 'directAssignMe', "directAssignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
+    attach('GET', 'directAssignDsaldiaz', "directAssignDsaldiaz", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue&toUser=dsaldiaz')
 
 
     attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
