@@ -210,6 +210,8 @@ $(document).ready(initializeMenu())
 setTimeout(initializeMenu, 2000)
 setTimeout(initializeMenu, 4000)
 setTimeout(initializeMenu, 6000)
+setTimeout(initializeMenu, 10000)
+setTimeout(initializeMenu, 15000)
 
 
 

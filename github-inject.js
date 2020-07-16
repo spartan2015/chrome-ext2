@@ -242,8 +242,27 @@ $(document).ready(function () {
 `);
 
      */
-
-
+    $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
+    $("button.iqb-find-public").click(function(e){
+        let codeLine = myjQuery("span.blob-code-inner");
+        codeLine.each((i,e)=>{
+            let targetElement = myjQuery(e);
+            if (e.innerText.match('public.+\(.+\)')){
+                let where = codeLine.parents("div.file").find("div.file-header").attr("data-path");
+                let file = where.substr(where.lastIndexOf("/")+1);
+                let fileNoExt = file.substring(0,file.lastIndexOf("."));
+                let test = myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
+                targetElement.append(`<span>Has test: ${test.length >0}</span>`);
+                if (test) {
+                    if ($("a.iqb-a",test).length == 0 ) {
+                        test.append(`<a class="iqb-a" name='${fileNoExt}'>H</a>`)
+                    }
+                    targetElement.append(`<a class="iqb-open-test" href="${test.attr('data-path')}">[OpenTest]</a>`);
+                    targetElement.append(`<a href='#${fileNoExt}'>[GoToTest]</a>`)
+                }
+            }
+        })
+    })
 
     let addIqbInput = function (e) {
         console.log(e.target);
