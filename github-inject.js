@@ -244,33 +244,42 @@ $(document).ready(function () {
      */
     $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
     $("button.iqb-find-public").click(function(e){
-        let codeLine = myjQuery("span.blob-code-inner");
+        let codeLine = myjQuery("span.blob-code-inner[data-code-marker='+']");
+        let messaged = {};
         codeLine.each((i,e)=>{
             let targetElement = myjQuery(e);
-            let matcher = e.innerText.match(/public.+\s(.+)\(.+\)/);
+            let matcher = e.innerText.match(/public.+\s(.+)\(.*/);
             if (matcher){
                 let methodName=matcher[1];
-                let where = codeLine.parents("div.file").find("div.file-header").attr("data-path");
+                let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
                 let file = where.substr(where.lastIndexOf("/")+1);
                 let fileNoExt = file.substring(0,file.lastIndexOf("."));
+                if (fileNoExt.endsWith("Test")){
+                    return;
+                }
                 let test = myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
                 let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
 
+                targetElement.append(`<a name='iqb-method-${methodName}'></a>`);
                 targetElement.append(`<span>Has test: ${test.length >0} method found: ${testLine.length > 0}</span>`);
-                if (test) {
+                if (test.length > 0) {
                     if ($("a.iqb-a",test).length == 0 ) {
                         test.append(`<a class="iqb-a" name='${fileNoExt}'>H</a>`)
                     }
                     targetElement.append(`<a class="iqb-open-test" href="${test.attr('data-path')}">[OpenTest]</a>`);
                     targetElement.append(`<a href='#${fileNoExt}'>[GoToTest]</a>`)
-                    if (testLine){
+                    if (testLine.length > 0){
                         testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                     }else{
-                        $("div.pr-toolbar").append("<div>no mention of method ${methodName} in ${fileNoExt}Test</div>")
+                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">no mention of method ${methodName} in ${fileNoExt}Test</a></div>`)
                     }
                     targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
                 }else{
-                    $("div.pr-toolbar").append("<div>no unit test for ${fileNoExt}</div>")
+                    if (!messaged[fileNoExt]) {
+                        targetElement.css("background-color","lightpink");
+                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">no unit test for ${fileNoExt}</a></div>`)
+                        messaged[fileNoExt] = true;
+                    }
                 }
             }
         })
