@@ -265,8 +265,12 @@ $(document).ready(function () {
                     targetElement.append(`<a href='#${fileNoExt}'>[GoToTest]</a>`)
                     if (testLine){
                         testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
+                    }else{
+                        $("div.pr-toolbar").append("<div>no mention of method ${methodName} in ${fileNoExt}Test</div>")
                     }
                     targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
+                }else{
+                    $("div.pr-toolbar").append("<div>no unit test for ${fileNoExt}</div>")
                 }
             }
         })
