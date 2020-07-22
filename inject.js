@@ -49,9 +49,9 @@ function initializeMenu() {
         https://docs.google.com/document/d/1VPA99yebFMqM1FLwn7GHuTXlpR7RqDVbmZM6035WzQI/edit#heading=h.i35a9q1rqui4
         */
 
-        $('.aui-toolbar2-primary').append(`
+        $('nav.aui-header').append(`
       
-
+<br/>
         <div class="iqb-menu">
             <button id="directAssignMe">DirectAssigneMe</button>
             <button id="directAssignDsaldiaz>DirectAssigneDsaldiaz</button>
@@ -202,6 +202,9 @@ function initializeMenu() {
 
         attach('POST', 'approve epic', "epicApprove", '/comments?action=approve&issueKey=${key}&jiraUser=${jiraUser}')
         attach('POST', 'reject epic', "epicReject", '/comments?action=reject&issueKey=${key}&jiraUser=${jiraUser}')
+
+
+        $("html>body").css("overflow-y", "scroll")
 
 }
 
