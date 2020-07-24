@@ -15,16 +15,16 @@ $(document).ready(function () {
                     return;
                 }
                 let parent = document.querySelector("div#description-val")
-                if (element.startsWith("P1")) {
+                if (element.startsWith("P")) {
                     let val = $(`tr:contains(${word})`, parent).css("background-color", 'green')
-                    if (!val.length) {
-                        log(word)
+                    /*if (!val.length) {
+                        logNotFoundInDescription(word)
                         notFound = true
-                    }
+                    }*/
                 } else {
                     let val = $(`td:contains(${word})`, parent).css("background-color", "green")
                     if (!val.length) {
-                        log(word)
+                        logNotFoundInDescription(word)
                         notFound = true
                     }
 
@@ -34,8 +34,13 @@ $(document).ready(function () {
 
     }
 
-    function log(word) {
-        let parent = document.querySelector("div.iqb-not-found")
+    function logNotFoundInDescription(word) {
+        let parent = document.querySelector("div.iqb-not-found-in-description")
+        $(parent).append(`<div style="background-color:red">${word}</div>`)
+    }
+
+    function logNotFoundInMapping(word) {
+        let parent = document.querySelector("div.iqb-not-found-in-mapping")
         $(parent).append(`<div style="background-color:red">${word}</div>`)
     }
 
@@ -49,7 +54,12 @@ $(document).ready(function () {
     <button class="iqb-matrix-set">Set</button>  
     <button class="iqb-matrix-get">Get</button>
     <div class="iqb-not-found">
-        Rejection reason: mapped item not present in description: 
+        <div class="iqb-not-found-in-description">
+        Rejection reason: mapped item not present in description:
+        </div>
+        <div class="iqb-not-found-in-mapping">
+        Rejection reason: item present in description but not in mapping:
+        </div>
     </div>  
     <button class="iqb-cp" onclick="window.prompt('Copy to clipboard: Ctrl+C, Enter', document.querySelector('div.iqb-not-found').innerText); return false;">CP</button>
     <button class="iqb-map">Map</button>
@@ -84,6 +94,14 @@ $(document).ready(function () {
             try {
                 var result = xhr.responseText.replace(/`/gm, "'");//.replace(/(\r\n|\n|\r)/gm, "<br/>");
                 highlight(result)
+
+                $("div#description-val table.confluenceTable tr td:first-child").each((i,e)=>{
+                  let text = $(e).text();
+                  let hasGreen = $(e).css("background-color") == "rgb(0, 128, 0)";
+                  if (!hasGreen){
+                      logNotFoundInMapping(text)
+                  }
+                });
 
             } catch (ex) {
                 alert(ex);
