@@ -299,20 +299,39 @@ $(document).ready(function () {
     myjQuery('body').on('DOMNodeInserted', 'div.TimelineItem', addIqbInput);
     myjQuery('body').on('DOMNodeInserted', 'tr.js-inline-comments-container', addIqbInput);
 
+
     // ==================== EVENTS
 
 
     myjQuery('body').on("click", "button.iqb-close", function () {
-        let textareaEl = myjQuery("textarea",
+        let textareaEl = myjQuery("textarea.comment-form-textarea",
             $(event.target).parents("tr.js-inline-comments-container"));
         if (!textareaEl.length)
             textareaEl =  myjQuery("textarea",
                 $(event.target).parents("div.TimelineItem"));
 
         textareaEl
-            .val("[closed]")
+            .val(textareaEl
+                .val() + " [closed]")
         textareaEl.form.submit();
     })
+
+    myjQuery('body').on("click", "button.js-comment-edit-button", function (e) {
+        let obj = $(e.target).parents("tr.js-inline-comments-container");
+        if (!obj.length){
+            obj = $(e.target).parents("div.TimelineItem");
+        }
+        console.log($("div.inline-comment-form", obj));
+
+        $("div.previewable-edit", obj).append(`
+                     <div>
+                            <input style="width:100px;" type="text" class="iqb-searchBox"/>
+                            <div id="iqb-searchBoxResults"></div>
+                            <button class="iqb-close">[Closed]</button>
+                    </div>
+                `)
+    })
+
 
 
     myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {

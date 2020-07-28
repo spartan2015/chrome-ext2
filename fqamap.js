@@ -15,6 +15,8 @@ $(document).ready(function () {
                     return;
                 }
                 let parent = document.querySelector("div#description-val")
+                try {
+
                 if (element.startsWith("P")) {
                     let val = $(`tr:contains(${word})`, parent).css("background-color", 'green')
                     /*if (!val.length) {
@@ -29,6 +31,7 @@ $(document).ready(function () {
                     }
 
                 }
+            }catch(e){console.log(e);}
             });
         })
 
@@ -104,7 +107,7 @@ $(document).ready(function () {
                 });
 
             } catch (ex) {
-                alert(ex);
+                console.log(ex);
             }
 
 

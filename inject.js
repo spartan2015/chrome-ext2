@@ -22,7 +22,7 @@ function initializeMenu() {
         }
 
         $("a.issue-link").attr("target", "_blank")
-        $("a.issue-link").append("<button onclick=' window.prompt(`Copy to clipboard: Ctrl+C, Enter`, this.parentElement.innerText); return false;'>CP</button>")
+        //$("a.issue-link").append("<button onclick=' window.prompt(`Copy to clipboard: Ctrl+C, Enter`, this.parentElement.innerText); return false;'>CP</button>")
 
         console.log("IQB - LOADED");
         let log = function (data) {
