@@ -182,8 +182,8 @@ function initializeMenu() {
         });
 
 
-        attach('GET', 'directAssignMe', "directAssignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
-        attach('GET', 'directAssignDsaldiaz', "directAssignDsaldiaz", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueTypey=${mainIssueTypey}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}&toUser=dsaldiaz')
+        attach('GET', 'directAssignMe', "directAssignMe", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueType=${mainIssueType}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}')
+        attach('GET', 'directAssignDsaldiaz', "directAssignDsaldiaz", 'http://localhost:3000/direct-assign?mainIssueKey=${mainIssueKey}&mainIssueType=${mainIssueType}&mainIssueStatus=${mainIssueStatus}&fqaIssue=${fqaIssue}&toUser=dsaldiaz')
 
 
         attach('GET', 'assignMe', "assignMe", 'http://localhost:3000/assign?key=${key}')
