@@ -271,13 +271,13 @@ $(document).ready(function () {
                     if (testLine.length > 0){
                         testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                     }else{
-                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">no mention of method ${methodName} in ${fileNoExt}Test</a></div>`)
+                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt}) found while looking in ${fileNoExt}Test</a></div>`)
                     }
                     targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
                 }else{
                     if (!messaged[fileNoExt]) {
                         targetElement.css("background-color","lightpink");
-                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">no unit test for ${fileNoExt}</a></div>`)
+                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37] no unit test for ${fileNoExt} found while looking for a UT for ${methodName} in ${file}</a></div>`)
                         messaged[fileNoExt] = true;
                     }
                 }
