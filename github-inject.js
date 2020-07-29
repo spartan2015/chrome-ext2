@@ -271,7 +271,7 @@ $(document).ready(function () {
                     if (testLine.length > 0){
                         testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                     }else{
-                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt}) found while looking in ${fileNoExt}Test</a></div>`)
+                        $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}Test</a></div>`)
                     }
                     targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
                 }else{
