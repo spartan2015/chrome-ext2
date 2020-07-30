@@ -15,7 +15,10 @@ $(document).ready(function () {
                     return;
                 }
 
-                let lineStyle = w=>{ let filter =  $(`li`).filter((i,e)=>e.innerText.substr(0,15).indexOf(w)!=-1); if (filter.length==0) logNotFoundInMapping(`not found ${w}`); filter.css('background-color','green')})
+                let lineStyle = w=>{
+                    let filter =  $(`li`).filter((i,e)=>e.innerText.substr(0,15).indexOf(w)!=-1);
+                    if (filter.length==0) logNotFoundInMapping(`not found ${w}`);
+                    filter.css('background-color','green')};
                 lineStyle(word);
 
                 let parent = document.querySelector("div#description-val")

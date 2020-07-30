@@ -242,6 +242,70 @@ $(document).ready(function () {
 `);
 
      */
+
+    function getLocalStorageElement(key) {
+        if (!localStorage[key]) {
+            localStorage[key] = prompt(`provide ${key}`);
+        }
+        return localStorage[key];
+    }
+
+    $(".timeline-comment-actions").append("<button class='iqb-comment-close'>Close</button>");
+    myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
+        let comment = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first").text().trim();
+
+        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
+        let user = parts[1]
+        let repoName = parts[2]
+        let no = parseInt(parts[3])
+
+        let commentId = myjQuery(e.target).parents(".js-comments-holder").find(".review-comment").attr('id').substr(1);
+
+        $.ajax({
+            url: `https://api.github.com/repos/${user}/${repoName}/pulls/comments/${commentId}`,
+            type: "PATCH",
+            headers: {
+                "Accept" : "application/vnd.github.v3+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
+                "Content-Type" : "application/json"
+            },
+            data: JSON.stringify({ body : `${comment} [closed]` }),
+            dataType:"json",
+            contentType: "application/json"
+        })
+
+    })
+
+
+
+    $(".timeline-comment-header").append("<button class='iqb-timelinecomment-close'>Close</button>");
+    myjQuery('body').on("click", "button.iqb-timelinecomment-close", function (e) {
+        let comment = myjQuery(e.target).parents(".timeline-comment-group").find(".edit-comment-hide").text().trim();
+
+        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
+        log.logInfo("getReviewComments: " + url);
+        if (!parts) {
+            log.logError("could not parse" + url)
+            return Promise.resolve([]);
+        }
+        let user = parts[1]
+        let repoName = parts[2]
+        let no = parseInt(parts[3])
+
+        $.ajax({
+            url: `/repos/${user}/${repoName}/pulls/${no}/comments`,
+            type:"POST",
+            headers: {
+                "Accept" : "application/vnd.github.v3+json",
+                "Authorization": btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa"))
+            },
+            data:{ body : `${comment} [closed]` },
+            dataType:"json"
+        })
+
+    })
+
+
     $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
     $("button.iqb-find-public").click(function(e){
         let codeLine = myjQuery("span.blob-code-inner[data-code-marker='+']");
