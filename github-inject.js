@@ -252,7 +252,8 @@ $(document).ready(function () {
 
     $(".timeline-comment-actions").append("<button class='iqb-comment-close'>Close</button>");
     myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
-        let comment = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first").text().trim();
+        let commentElement = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first");
+        let comment = commentElement.text().trim();
 
         let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
         let user = parts[1]
@@ -272,6 +273,29 @@ $(document).ready(function () {
             data: JSON.stringify({ body : `${comment} [closed]` }),
             dataType:"json",
             contentType: "application/json"
+            success: function( data, textStatus, jQxhr ){
+                commentElement.append("<div>[Closed]</div>")
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                $.ajax({
+                    url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments/${commentId}/replies`,
+                    type: "POST",
+                    headers: {
+                        "Accept": "application/vnd.github.v3+json",
+                        "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({body: `${comment} [closed]`}),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function( data, textStatus, jQxhr ){
+                        commentElement.append("<div>[Closed]</div>")
+                    },
+                    error: function( jqXhr, textStatus, errorThrown ){
+                        alert("failed to close comment");
+                    }
+                });
+            }
         })
 
     })
