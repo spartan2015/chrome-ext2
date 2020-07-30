@@ -65,9 +65,11 @@ $(document).ready(function () {
         </div>
     </div>  
     <button class="iqb-cp" onclick="window.prompt('Copy to clipboard: Ctrl+C, Enter', document.querySelector('div.iqb-not-found').innerText); return false;">CP</button>
-    <button class="iqb-map">Map</button>
+    <button class="iqb-map">Map</button>    
     <button class="iqb-reject">Reject</button>
     <button class="iqb-approve">Approve</button>
+    
+    <button class="iqb-mapmanual">MapManual</button>
 `);
 
     function getEpicKey() {
@@ -176,6 +178,13 @@ $(document).ready(function () {
             highlight(text);
 
         }
+    })
+
+    $("button.iqb-mapmanual").click(function () {
+        $("textarea.iqb-matrix").val()
+            .split("\n").forEach(w=>{ let filter =  $(`li`)
+            .filter((i,e)=>e.innerText.substr(0,15).indexOf(w)!=-1);
+            if (filter.length==0) logNotFoundInMapping(text)(`not found ${w}`); filter.css('background-color','green')})
     })
 
     $("button.iqb-matrix-get").click(function () {
