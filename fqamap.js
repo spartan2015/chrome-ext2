@@ -19,7 +19,7 @@ $(document).ready(function () {
                     let filter =  $(`li`).filter((i,e)=>e.innerText.substr(0,15).indexOf(w)!=-1);
                     if (filter.length==0) logNotFoundInMapping(`not found ${w}`);
                     filter.css('background-color','green')};
-                lineStyle(word);
+
 
                 let parent = document.querySelector("div#description-val")
                 try {
@@ -33,7 +33,10 @@ $(document).ready(function () {
                 } else {
                     let val = $(`td:contains(${word})`, parent).css("background-color", "green")
                     if (!val.length) {
-                        logNotFoundInDescription(word)
+
+                        lineStyle(word);
+
+                        //logNotFoundInDescription(word)
                         notFound = true
                     }
 

@@ -250,57 +250,59 @@ $(document).ready(function () {
         return localStorage[key];
     }
 
-    $(".timeline-comment-actions").append("<button class='iqb-comment-close'>Close</button>");
-    myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
-        let commentElement = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first");
-        let comment = commentElement.text().trim();
+    function applyCloseButtons(){
 
-        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
-        let user = parts[1]
-        let repoName = parts[2]
-        let no = parseInt(parts[3])
+        $(".timeline-comment-actions").append("<button class='iqb-comment-close'>Close</button>");
+        myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
+            let commentElement = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first");
+            let comment = commentElement.text().trim();
 
-        let commentId = myjQuery(e.target).parents(".js-comments-holder").find(".review-comment").attr('id').substr(1);
+            let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
+            let user = parts[1]
+            let repoName = parts[2]
+            let no = parseInt(parts[3])
 
-        $.ajax({
-            url: `https://api.github.com/repos/${user}/${repoName}/pulls/comments/${commentId}`,
-            type: "PATCH",
-            headers: {
-                "Accept" : "application/vnd.github.v3+json",
-                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
-                "Content-Type" : "application/json"
-            },
-            data: JSON.stringify({ body : `${comment} [closed]` }),
-            dataType:"json",
-            contentType: "application/json"
-            success: function( data, textStatus, jQxhr ){
-                commentElement.append("<div>[Closed]</div>")
-            },
-            error: function( jqXhr, textStatus, errorThrown ){
-                $.ajax({
-                    url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments/${commentId}/replies`,
-                    type: "POST",
-                    headers: {
-                        "Accept": "application/vnd.github.v3+json",
-                        "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
-                        "Content-Type": "application/json"
-                    },
-                    data: JSON.stringify({body: `${comment} [closed]`}),
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: function( data, textStatus, jQxhr ){
-                        commentElement.append("<div>[Closed]</div>")
-                    },
-                    error: function( jqXhr, textStatus, errorThrown ){
-                        alert("failed to close comment");
-                    }
-                });
-            }
+            let commentId = myjQuery(e.target).parents(".js-comments-holder").find(".review-comment").attr('id').substr(1);
+
+            $.ajax({
+                url: `https://api.github.com/repos/${user}/${repoName}/pulls/comments/${commentId}`,
+                type: "PATCH",
+                headers: {
+                    "Accept" : "application/vnd.github.v3+json",
+                    "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
+                    "Content-Type" : "application/json"
+                },
+                data: JSON.stringify({ body : `${comment} [closed]` }),
+                dataType:"json",
+                contentType: "application/json",
+                success: function( data, textStatus, jQxhr ){
+                    commentElement.append("<div>[Closed]</div>")
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    $.ajax({
+                        url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments/${commentId}/replies`,
+                        type: "POST",
+                        headers: {
+                            "Accept": "application/vnd.github.v3+json",
+                            "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                            "Content-Type": "application/json"
+                        },
+                        data:`{"body": "${comment} [closed]"}`,
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function( data, textStatus, jQxhr ){
+                            commentElement.append("<div>[Closed]</div>")
+                        },
+                        error: function( jqXhr, textStatus, errorThrown ){
+                            alert("failed to close comment");
+                        }
+                    });
+                }
+            })
+
         })
 
-    })
-
-
+    }
 
     $(".timeline-comment-header").append("<button class='iqb-timelinecomment-close'>Close</button>");
     myjQuery('body').on("click", "button.iqb-timelinecomment-close", function (e) {
@@ -331,6 +333,12 @@ $(document).ready(function () {
 
 
     $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
+
+    $("div.pr-toolbar").append("<button class='iqb-find-public'>AppendCloseButtons</button>")
+    $("button.iqb-find-public").click(function(e){
+       applyCloseButtons();
+    })
+
     $("button.iqb-find-public").click(function(e){
         let codeLine = myjQuery("span.blob-code-inner[data-code-marker='+']");
         let messaged = {};
