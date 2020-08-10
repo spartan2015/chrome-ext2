@@ -353,6 +353,7 @@ $(document).ready(function () {
 
     function processPublicMethod(foundPublicMethod, targetElement, messaged) {
         let methodName = foundPublicMethod[1];
+        targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
         let isTest =
@@ -361,12 +362,12 @@ $(document).ready(function () {
                 ||
                 file.endsWith(".spec.ts");
         let isJs = file.endsWith(".ts");
-        let fileNoExt = file.file.substring(0, file.lastIndexOf("."))
+        let fileNoExt = file.substring(0, file.lastIndexOf("."))
         if (isTest) {
             return;
         }
         let test = isJs ?
-            myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}\\.spec\\.ts]`)
+            myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
             : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
         let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
 
@@ -392,6 +393,52 @@ $(document).ready(function () {
             }
         }
     }
+
+    myjQuery('body').on("click", "button.iqb-report-missing-ut", function (e) {
+        let targetElement = $(e.target);
+        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number").attr("data-line-number");
+        let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
+        let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+        let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
+        let firstPos = href.indexOf("blob/")+5;
+        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
+        let user = parts[1]
+        let repoName = parts[2]
+        let no = parseInt(parts[3])
+
+        let comment = "[37] No direct unit test found for this method while search the corresponding .spec.ts"
+
+        $.ajax({
+            url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
+            type: "POST",
+            headers: {
+                "Accept" : "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
+                "Content-Type" : "application/json"
+            },
+            data: JSON.stringify({
+                body : `${comment}`,
+                commit_id,
+                path,
+                line : parseInt(lineNo),
+                side : "RIGHT",
+                //position: position,
+                //"start_side": "RIGHT",
+                //start_line: lineNo
+
+            }),
+            dataType:"json",
+            contentType: "application/json",
+            success: function( data, textStatus, jQxhr ){
+                targetElement.append("<div>[ADDED UT MISSING]</div>")
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                alert("failed to post")
+            }
+        })
+
+    })
 
 
     let addIqbInput = function (e) {
