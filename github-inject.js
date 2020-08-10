@@ -344,7 +344,7 @@ $(document).ready(function () {
         let messaged = {};
         codeLine.each((i,e)=>{
             let targetElement = myjQuery(e);
-            let foundPublicMethod = e.innerText.match(/public.+\s(.+)\(.*/);
+            let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
             if ( foundPublicMethod ){
                 processPublicMethod(foundPublicMethod, targetElement, messaged);
             }
