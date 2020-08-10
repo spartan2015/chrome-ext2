@@ -359,14 +359,14 @@ $(document).ready(function () {
                 file.substring(0, file.lastIndexOf("."))
                     .endsWith("Test")
                 ||
-                file.endsWith(".ts");
+                file.endsWith(".spec.ts");
         let isJs = file.endsWith(".ts");
-        let fileNoExt = isJs ? file.substring(0, file.indexof(".spec.ts")) : file.file.substring(0, file.lastIndexOf("."))
+        let fileNoExt = file.file.substring(0, file.lastIndexOf("."))
         if (isTest) {
             return;
         }
         let test = isJs ?
-            myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}.spec.ts]`)
+            myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}\\.spec\\.ts]`)
             : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
         let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
 
@@ -381,7 +381,7 @@ $(document).ready(function () {
             if (testLine.length > 0) {
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
             } else {
-                $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}${isJs ? ".spec.st" : "Test"}</a></div>`)
+                $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}${isJs ? ".spec.ts" : "Test"}</a></div>`)
             }
             targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
         } else {
