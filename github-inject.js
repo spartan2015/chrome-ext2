@@ -260,7 +260,7 @@ $(document).ready(function () {
     let no = parseInt(parts[3])
 
     $("div.pr-toolbar").append(`       
-        <div>Repo: ${repoName} ${lookoutFor[repoName]}</div>    
+        <div style="background-color:lightpink">Repo: ${repoName} ${lookoutFor[repoName]}</div>    
     `)
 
 
