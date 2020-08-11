@@ -1,4 +1,4 @@
-window.myjQuery = $;
+var myjQuery = $;
 $(document).ready(function () {
     let rules = {
         "2":
@@ -243,6 +243,27 @@ $(document).ready(function () {
 
      */
 
+    let lookoutFor = {
+        "5k-sococo" : [
+            "Merge the code when done"
+        ],
+        "devfactory-codeserver-framework":[
+            "LOTS OF PCA REJECTIONS - CHECK checklist PCA rules always!",
+            "method visibility order"
+        ]
+
+    }
+
+    let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
+    let user = parts[1]
+    let repoName = parts[2]
+    let no = parseInt(parts[3])
+
+    $("div.pr-toolbar").append(`       
+        <div>Repo: ${repoName} ${lookoutFor[repoName]}</div>    
+    `)
+
+
     function getLocalStorageElement(key) {
         if (!localStorage[key]) {
             localStorage[key] = prompt(`provide ${key}`);
@@ -256,11 +277,6 @@ $(document).ready(function () {
         myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
             let commentElement = myjQuery(e.target).parents(".js-comments-holder").find(".comment-body:first");
             let comment = commentElement.text().trim();
-
-            let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
-            let user = parts[1]
-            let repoName = parts[2]
-            let no = parseInt(parts[3])
 
             let commentId = myjQuery(e.target).parents(".js-comments-holder").find(".review-comment").attr('id').substr(1);
 
@@ -307,16 +323,6 @@ $(document).ready(function () {
     $(".timeline-comment-header").append("<button class='iqb-timelinecomment-close'>Close</button>");
     myjQuery('body').on("click", "button.iqb-timelinecomment-close", function (e) {
         let comment = myjQuery(e.target).parents(".timeline-comment-group").find(".edit-comment-hide").text().trim();
-
-        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
-        log.logInfo("getReviewComments: " + url);
-        if (!parts) {
-            log.logError("could not parse" + url)
-            return Promise.resolve([]);
-        }
-        let user = parts[1]
-        let repoName = parts[2]
-        let no = parseInt(parts[3])
 
         $.ajax({
             url: `/repos/${user}/${repoName}/pulls/${no}/comments`,
@@ -402,10 +408,6 @@ $(document).ready(function () {
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
         let firstPos = href.indexOf("blob/")+5;
         let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
-        let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
-        let user = parts[1]
-        let repoName = parts[2]
-        let no = parseInt(parts[3])
 
         let comment = "[37] No direct unit test found for this method while search the corresponding .spec.ts"
 

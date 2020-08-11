@@ -144,10 +144,15 @@ function initializeMenu() {
                 endpointPattern = endpointPattern.replace("${mainIssueKey}", location.href.substr(location.href.lastIndexOf("/") + 1))
                 endpointPattern = endpointPattern.replace("${mainIssueType}", $("span#type-val").text().trim())
                 endpointPattern = endpointPattern.replace("${mainIssueStatus}", $("span#status-val").text().trim())
-                endpointPattern = endpointPattern.replace("${fqaIssue}", $("table#issuetable tr").filter((i, e) => $("td.status", e).text().trim() == 'In Review' &&
-                    ($("td.issuetype img", e).attr("alt") == 'QE Review' || $("td.issuetype img", e).attr("alt") == 'QE FQA Review')
+                endpointPattern = endpointPattern.replace("${fqaIssue}",
+                    $("table#issuetable tr").filter(
+                        (i, e) => {
+                            return $("td.status", e).text().trim() == 'In Review' &&
+                          ['QE Review', 'QE Comment Review', 'QE FQA Review'].indexOf($("td.issuetype img", e).attr("alt")) !=-1
+                        }
+                    ).attr("data-issuekey")
                 )
-                    .attr("data-issuekey"))
+
                 endpointPattern = endpointPattern.replace("${key}", key)
                 endpointPattern = endpointPattern.replace("${jiraUser}", getLocalStorageElement(jiraUserKey));
 
