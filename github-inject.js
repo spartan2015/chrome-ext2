@@ -316,7 +316,7 @@ $(document).ready(function () {
                             commentElement.append("<div>[Closed]</div>")
                         },
                         error: function( jqXhr, textStatus, errorThrown ){
-                            alert("failed to close comment");
+                            commentElement.append("<div>Could not close comment</div>")
                         }
                     });
                 }
