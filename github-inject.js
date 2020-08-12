@@ -1,5 +1,6 @@
 var myjQuery = $;
 $(document).ready(function () {
+    window.vasQ = $;
     let rules = {
         "2":
             "If the unit PR couples several other units (exception), then there is on the child units, demos for the e2es linked, and they will be reviewed upfront with the unit getting reviewed (which can lead to rejections on the parent unit)."
@@ -250,6 +251,9 @@ $(document).ready(function () {
         "devfactory-codeserver-framework":[
             "LOTS OF PCA REJECTIONS - CHECK checklist PCA rules always!",
             "method visibility order"
+        ],
+        "aurea-jivecloud-jivedaily-reactnative" : [
+            "Allows dangling comma"
         ]
 
     }
@@ -281,6 +285,8 @@ $(document).ready(function () {
             let commentId = myjQuery(e.target).parents(".js-comments-holder").find(".review-comment").attr('id').substr(1);
 
             $.ajax({
+                //PATCH /repos/:owner/:repo/pulls/comments/:comment_id: https://developer.github.com/v3/pulls/comments/#create-a-reply-for-a-review-comment
+                //
                 url: `https://api.github.com/repos/${user}/${repoName}/pulls/comments/${commentId}`,
                 type: "PATCH",
                 headers: {
@@ -345,8 +351,21 @@ $(document).ready(function () {
        applyCloseButtons();
     })
 
+    function wildCardsInPackageJson() {
+        myjQuery("div.file div.file-header[data-path*='package.json']").parents("div.file").find("span.blob-code-inner[data-code-marker='+']")
+            .each((i, e) => {
+                let targetElement = myjQuery(e);
+                let wildCard = e.innerText.match(/[\^~*]+/);
+                if (wildCard) {
+                    targetElement.css("background-color", "lightpink")
+                }
+            })
+    }
+
     $("button.iqb-find-public").click(function(e){
-        let codeLine = myjQuery("span.blob-code-inner[data-code-marker='+']");
+        wildCardsInPackageJson();
+
+        let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
         let messaged = {};
         codeLine.each((i,e)=>{
             let targetElement = myjQuery(e);
