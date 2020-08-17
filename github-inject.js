@@ -493,6 +493,16 @@ $(document).ready(function () {
         }
     }
 
+    function noImportant(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf("!important") > 0
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[18] avoid using !important </div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function hasEqualsVerifier(e){
         let targetElement = myjQuery(e);
         let wildCard = targetElement.text().match(/public boolean (equals)/) || e.innerText.match(/public int (hashCode)/)
@@ -519,13 +529,24 @@ $(document).ready(function () {
     $("button.iqb-find-public").click(function(e){
         wildCardsInPackageJson();
 
-        let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
-        let messaged = {};
-
         checkCommitName();
 
-        codeLine.each((i,e)=>{
+        let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
 
+        let messaged = {};
+
+
+
+        codeLine.each((i,e)=>{
+            let where = $(e).parents("div.file").find("div.file-header").attr("data-path");
+            let file = where.substr(where.lastIndexOf("/") + 1);
+
+            let extension = file.substr(file.lastIndexOf(".")+1);
+            if (["java","ts", "css", "js"].indexOf(extension) == -1){
+                return;
+            }
+
+            noImportant(e);
             noLogWarnOrDebug(e)
             noWhitebox(e)
             hasEqualsVerifier(e);
@@ -550,11 +571,6 @@ $(document).ready(function () {
 
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
-
-        let extension = file.substr(file.lastIndexOf(".")+1);
-        if (["java","ts"].indexOf(extension) == -1){
-            return;
-        }
 
         let isTest =
                 file.substring(0, file.lastIndexOf("."))
