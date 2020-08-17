@@ -254,8 +254,20 @@ $(document).ready(function () {
         ],
         "aurea-jivecloud-jivedaily-reactnative" : [
             "Allows dangling comma"
+        ],
+        "jive-cloud-application": [
+            `Generic classes are explicit when used: public class EventInterceptor implements EventListener VS  public class EventInterceptor implements EventListener<BaseJiveEvent>`,
+            `There is no method overriding unless business logic differs from the base class`,
+            `Listeners, Interceptors, handlers etc are covered by IT tests`,
+            `Code complies to Product coding guildeline: https://aurea.jiveon.com/docs/DOC-196119`,
+            `If PR touches cache, it does not introduce changes on the behavior, unless clear on the FS scope.`,
+            `If EqualsVerifier.forClass() is used, it is configured with .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)`,
+            `"PR adheres to the following design: Jive Core > internal bus > event interceptor > SNS bus`,
+            `(There is no skipping of the internal bus is wrong - except in partial or full reindexing)`,
+            `There is no whitebox testing`,
+            `ExpectedExceptions rule is used`,
+            `There is no log.debug and warning (except if tracking a real issue)`,
         ]
-
     }
 
     let parts = window.location.href.match("https://github.com/([^/]+)/([^/]+)/pull/([^/]+)(/files)?")
@@ -263,8 +275,13 @@ $(document).ready(function () {
     let repoName = parts[2]
     let no = parseInt(parts[3])
 
-    $("div.pr-toolbar").append(`       
-        <div style="background-color:lightpink">Repo: ${repoName} ${lookoutFor[repoName]}</div>    
+    let rulesString = lookoutFor[repoName].map(e=>`<li>${e}</li>`).join("")
+    $("div.gh-header").append(`       
+        <div style="background-color:lightpink">Repo: ${repoName} 
+            <ul>
+                ${rulesString}
+            </ul>
+        </div>    
     `)
 
 
