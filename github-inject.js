@@ -503,7 +503,7 @@ $(document).ready(function () {
             let file = where.substr(where.lastIndexOf("/") + 1);
             let test = isJs ?
                 myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
-                : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
+                : myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}Test']`)
             let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
             if (testLine.length > 0){
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
@@ -550,6 +550,12 @@ $(document).ready(function () {
 
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
+
+        let extension = file.substr(file.lastIndexOf(".")+1);
+        if (["java","ts"].indexOf(extension) == -1){
+            return;
+        }
+
         let isTest =
                 file.substring(0, file.lastIndexOf("."))
                     .endsWith("Test")
