@@ -256,6 +256,7 @@ $(document).ready(function () {
             "Allows dangling comma"
         ],
         "jive-cloud-application": [
+            `Amazon AWS service wrappers - Configure an AWS service The AWS Service wrapper client Using the service client Re-configure at runtime Close the client if feature disabled`,
             `Generic classes are explicit when used: public class EventInterceptor implements EventListener VS  public class EventInterceptor implements EventListener<BaseJiveEvent>`,
             `There is no method overriding unless business logic differs from the base class`,
             `Listeners, Interceptors, handlers etc are covered by IT tests`,
@@ -383,11 +384,39 @@ $(document).ready(function () {
             })
     }
 
+    function checkCommitName(){
+        let targetElement = $("span.js-issue-title");
+        let match = targetElement.text().match("[A-Z]+-[0-9]+\s.+");
+        if (!match){
+            targetElement.append("<div class='iqb-error'>[43] PR title must match JIRA-KEY description</div>")
+        }
+    }
+
     function noLogWarnOrDebug(e){
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("log.warn") > 0 || e.innerText.indexOf("log.debug") > 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] log warn or debugged only if absolutely necessary</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function emptyString(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf('==""') > 0
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[43] empty string or null use StringUtils.defaultString</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function emptyCollection(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf('.size()\s*==\s*0') > 0 || e.innerText.indexOf('.length\s*==\s*0') > 0
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[43] empty collection ListUtils.emptyIfNull ||  CollectionUtils.emptyIfNull ||  ArrayUtils.nullToEmpty </div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
             targetElement.css("background-color", "lightpink")
         }
@@ -404,6 +433,29 @@ $(document).ready(function () {
             }
         }
     }
+
+    function loggerJive(e){
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.match("Logger")
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] Whenever you create a new class, always choose SLF4J. We prefer to use \"log\" instead of \"logger\", \"LOGGER\" or \"LOG\". Please do the same. From time to time you might want that the logger is not \"private static\", in that case please drop a comment on it explaining why.</div>")
+                targetElement.css("background-color", "lightpink")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            }
+        }
+    }
+
+    function parameterizedLogging(e){
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.match("log\..+\\+.+")
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] Use parameterized logging only. no string concat</div>")
+                targetElement.css("background-color", "lightpink")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            }
+    }
+
 
     function rethrowExceptions(e){
         if (isJive()) {
@@ -468,6 +520,9 @@ $(document).ready(function () {
 
         let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
         let messaged = {};
+
+        checkCommitName();
+
         codeLine.each((i,e)=>{
 
             noLogWarnOrDebug(e)
@@ -476,6 +531,10 @@ $(document).ready(function () {
             interruptedException(e)
             extendingJiveExceptions(e);
             rethrowExceptions(e);
+            emptyCollection(e);
+            emptyString(e);
+            loggerJive(e);
+            parameterizedLogging(e);
 
             let targetElement = myjQuery(e);
             let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
