@@ -386,7 +386,7 @@ $(document).ready(function () {
 
     function checkCommitName(){
         let targetElement = $("span.js-issue-title");
-        let match = targetElement.text().match("[A-Z0-9]+-[0-9]+:\s.+");
+        let match = targetElement.text().match("[A-Z0-9]+-[0-9]+.+");
         if (!match){
             targetElement.css("background-color", "lightpink")
             targetElement.append("<div class='iqb-error'>[43] PR title must match JIRA-KEY description</div>")
