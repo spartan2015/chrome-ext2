@@ -379,12 +379,24 @@ $(document).ready(function () {
             })
     }
 
+    function noLogWarnOrDebug(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf("log.warn") || e.innerText.indexOf("log.debug")
+        if (wildCard) {
+            targetElement.append("<div>[43] log warn or debugged only if absolutely necessary</div>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     $("button.iqb-find-public").click(function(e){
         wildCardsInPackageJson();
 
         let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
         let messaged = {};
         codeLine.each((i,e)=>{
+
+            noLogWarnOrDebug(e)
+
             let targetElement = myjQuery(e);
             let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
             if ( foundPublicMethod ){
