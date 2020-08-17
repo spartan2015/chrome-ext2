@@ -388,6 +388,7 @@ $(document).ready(function () {
         let targetElement = $("span.js-issue-title");
         let match = targetElement.text().match("[A-Z]+-[0-9]+\s.+");
         if (!match){
+            targetElement.css("background-color", "lightpink")
             targetElement.append("<div class='iqb-error'>[43] PR title must match JIRA-KEY description</div>")
         }
     }
