@@ -280,7 +280,7 @@ $(document).ready(function () {
         return repoName == "jive-cloud-application";
     }
 
-    let rulesString = lookoutFor[repoName].map(e=>`<li>${e}</li>`).join("")
+    let rulesString = lookoutFor[repoName] ? lookoutFor[repoName].map(e=>`<li>${e}</li>`).join("") : ""
     $("div.gh-header").append(`       
         <div style="background-color:lightpink">Repo: ${repoName} 
             <ul>
