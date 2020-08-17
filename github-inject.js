@@ -395,7 +395,7 @@ $(document).ready(function () {
 
     function noLogWarnOrDebug(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("log.warn") > 0 || e.innerText.indexOf("log.debug") > 0
+        let wildCard = e.innerText.indexOf("log.warn") >= 0 || e.innerText.indexOf("log.debug") >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] log warn or debugged only if absolutely necessary</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -405,7 +405,7 @@ $(document).ready(function () {
 
     function emptyString(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf('==""') > 0
+        let wildCard = e.innerText.indexOf('==""') >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] empty string or null use StringUtils.defaultString</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -415,7 +415,7 @@ $(document).ready(function () {
 
     function emptyCollection(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf('.size()\s*==\s*0') > 0 || e.innerText.indexOf('.length\s*==\s*0') > 0
+        let wildCard = e.innerText.indexOf('.size()\s*==\s*0') >= 0 || e.innerText.indexOf('.length\s*==\s*0') >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] empty collection ListUtils.emptyIfNull ||  CollectionUtils.emptyIfNull ||  ArrayUtils.nullToEmpty </div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -472,7 +472,7 @@ $(document).ready(function () {
 
     function interruptedException(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("InterruptedException") > 0
+        let wildCard = e.innerText.indexOf("InterruptedException") >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] Interrupted exception - InterruptedException .. due to a thread is interrupted while waiting, sleeping or otherwise occupied thread .. you should always restore the interrupted status of the thread " +
                 "        if (interrupted) {\n" +
@@ -485,7 +485,7 @@ $(document).ready(function () {
 
     function noWhitebox(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("Whitebox") > 0 || e.innerText.indexOf("PowerMock") > 0
+        let wildCard = e.innerText.indexOf("Whitebox") >= 0 || e.innerText.indexOf("PowerMock") >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[43] no whitebox/powermock testing. cannot use Mockito's Whitebox to get and set the internal state of a static field, for that we created the com.jivesoftware.test.reflect.Whitebox </div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -495,7 +495,7 @@ $(document).ready(function () {
 
     function noImportant(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("!important") > 0
+        let wildCard = e.innerText.indexOf("!important") >= 0
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[18] avoid using !important </div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
