@@ -381,10 +381,41 @@ $(document).ready(function () {
 
     function noLogWarnOrDebug(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("log.warn") || e.innerText.indexOf("log.debug")
+        let wildCard = e.innerText.indexOf("log.warn") > 0 || e.innerText.indexOf("log.debug") > 0
         if (wildCard) {
             targetElement.append("<div>[43] log warn or debugged only if absolutely necessary</div>")
             targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function noWhitebox(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf("Whitebox") > 0
+        if (wildCard) {
+            targetElement.append("<div>[43] no whitebox testing </div>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function hasEqualsVerifier(e){
+        let targetElement = myjQuery(e);
+        let wildCard = targetElement.text().match(/public boolean (equals)/) || e.innerText.match(/public int (hashCode)/)
+        if (wildCard) {
+            let methodName = wildCard[1];
+
+            let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+            let file = where.substr(where.lastIndexOf("/") + 1);
+            let test = isJs ?
+                myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
+                : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
+            let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
+            if (testLine.length > 0){
+                testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
+                targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
+            }else{
+                targetElement.append("<div>[43] must be tested with EqualsVerifier </div>")
+                targetElement.css("background-color", "lightpink")
+            }
         }
     }
 
@@ -396,6 +427,8 @@ $(document).ready(function () {
         codeLine.each((i,e)=>{
 
             noLogWarnOrDebug(e)
+            noWhitebox(e)
+            hasEqualsVerifier(e);
 
             let targetElement = myjQuery(e);
             let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
@@ -407,7 +440,7 @@ $(document).ready(function () {
 
     function processPublicMethod(foundPublicMethod, targetElement, messaged) {
         let methodName = foundPublicMethod[1];
-        targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
+
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
         let isTest =
@@ -415,11 +448,13 @@ $(document).ready(function () {
                     .endsWith("Test")
                 ||
                 file.endsWith(".spec.ts");
+
         let isJs = file.endsWith(".ts");
         let fileNoExt = file.substring(0, file.lastIndexOf("."))
         if (isTest) {
             return;
         }
+
         let test = isJs ?
             myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
             : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
@@ -440,6 +475,8 @@ $(document).ready(function () {
             }
             targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
         } else {
+            targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
+
             if (!messaged[fileNoExt]) {
                 targetElement.css("background-color", "lightpink");
                 $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37] no unit test for ${fileNoExt} found while looking for a UT for ${methodName} of ${file}</a></div>`)
