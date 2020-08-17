@@ -275,6 +275,10 @@ $(document).ready(function () {
     let repoName = parts[2]
     let no = parseInt(parts[3])
 
+    function isJive(){
+        return repoName == "jive-cloud-application";
+    }
+
     let rulesString = lookoutFor[repoName].map(e=>`<li>${e}</li>`).join("")
     $("div.gh-header").append(`       
         <div style="background-color:lightpink">Repo: ${repoName} 
@@ -340,7 +344,6 @@ $(document).ready(function () {
             })
 
         })
-
     }
 
     $(".timeline-comment-header").append("<button class='iqb-timelinecomment-close'>Close</button>");
@@ -360,7 +363,6 @@ $(document).ready(function () {
 
     })
 
-
     $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
 
     $("div.pr-toolbar").append("<button class='iqb-find-public'>AppendCloseButtons</button>")
@@ -375,6 +377,8 @@ $(document).ready(function () {
                 let wildCard = e.innerText.match(/[\^~*]+/);
                 if (wildCard) {
                     targetElement.css("background-color", "lightpink")
+                    targetElement.append("<div class='iqb-error'>[28] Flexible dependency versions are not used.</div>")
+                    targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
                 }
             })
     }
@@ -383,16 +387,55 @@ $(document).ready(function () {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("log.warn") > 0 || e.innerText.indexOf("log.debug") > 0
         if (wildCard) {
-            targetElement.append("<div>[43] log warn or debugged only if absolutely necessary</div>")
+            targetElement.append("<div class='iqb-error'>[43] log warn or debugged only if absolutely necessary</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function extendingJiveExceptions(e){
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.match("class.+Exception")
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] Whenever possible create your exception based on the existing JiveException (checked) and JiveRuntimeException (unchecked).</div>")
+                targetElement.css("background-color", "lightpink")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            }
+        }
+    }
+
+    function rethrowExceptions(e){
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.match("throw .+")
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] When rethrowing exceptions, if appropriate wrap them with JiveException or JiveRuntimeException.</div>")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+                targetElement.css("background-color", "lightpink")
+            }
+        }
+    }
+
+    function interruptedException(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf("InterruptedException") > 0
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[43] Interrupted exception - InterruptedException .. due to a thread is interrupted while waiting, sleeping or otherwise occupied thread .. you should always restore the interrupted status of the thread " +
+                "        if (interrupted) {\n" +
+                "            Thread.currentThread().interrupt();\n" +
+                "        }</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
             targetElement.css("background-color", "lightpink")
         }
     }
 
     function noWhitebox(e){
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.indexOf("Whitebox") > 0
+        let wildCard = e.innerText.indexOf("Whitebox") > 0 || e.innerText.indexOf("PowerMock") > 0
         if (wildCard) {
-            targetElement.append("<div>[43] no whitebox testing </div>")
+            targetElement.append("<div class='iqb-error'>[43] no whitebox/powermock testing. cannot use Mockito's Whitebox to get and set the internal state of a static field, for that we created the com.jivesoftware.test.reflect.Whitebox </div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
             targetElement.css("background-color", "lightpink")
         }
     }
@@ -413,7 +456,8 @@ $(document).ready(function () {
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                 targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
             }else{
-                targetElement.append("<div>[43] must be tested with EqualsVerifier </div>")
+                targetElement.append("<div class='iqb-error'>[43] must be tested with EqualsVerifier </div>")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
                 targetElement.css("background-color", "lightpink")
             }
         }
@@ -429,6 +473,9 @@ $(document).ready(function () {
             noLogWarnOrDebug(e)
             noWhitebox(e)
             hasEqualsVerifier(e);
+            interruptedException(e)
+            extendingJiveExceptions(e);
+            rethrowExceptions(e);
 
             let targetElement = myjQuery(e);
             let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
@@ -484,6 +531,50 @@ $(document).ready(function () {
             }
         }
     }
+
+
+    myjQuery('body').on("click", "button.iqb-report-error", function (e) {
+        let targetElement = $(e.target);
+
+        let comment = targetElement.siblings("div.iqb-error").text();
+
+        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number").attr("data-line-number");
+        let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
+        let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+        let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
+        let firstPos = href.indexOf("blob/")+5;
+        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+
+        $.ajax({
+            url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
+            type: "POST",
+            headers: {
+                "Accept" : "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
+                "Content-Type" : "application/json"
+            },
+            data: JSON.stringify({
+                body : `${comment}`,
+                commit_id,
+                path,
+                line : parseInt(lineNo),
+                side : "RIGHT",
+                //position: position,
+                //"start_side": "RIGHT",
+                //start_line: lineNo
+
+            }),
+            dataType:"json",
+            contentType: "application/json",
+            success: function( data, textStatus, jQxhr ){
+                targetElement.append("<div>[ADDED UT MISSING]</div>")
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                alert("failed to post")
+            }
+        })
+
+    })
 
     myjQuery('body').on("click", "button.iqb-report-missing-ut", function (e) {
         let targetElement = $(e.target);
