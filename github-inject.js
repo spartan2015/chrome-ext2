@@ -573,7 +573,7 @@ $(document).ready(function () {
             equalsVerifierWithSuppress(e);
 
             let targetElement = myjQuery(e);
-            let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
+            let foundPublicMethod = e.innerText.match(/public[^(]+\s(.+)\(.*/);
             if ( foundPublicMethod ){
                 processPublicMethod(foundPublicMethod, targetElement, messaged);
             }
@@ -599,25 +599,40 @@ $(document).ready(function () {
         }
 
         let test = isJs ?
-            myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
-            : myjQuery(`div#files div.file div.file-header[data-path*=${fileNoExt}Test]`)
-        let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
+            myjQuery(`div#files div.file div.file-header[data-path*='\.spec\.ts']`)
+            : myjQuery(`div#files div.file div.file-header[data-path*='Test.java']`)
+        let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains('.${methodName}(')`);
+
 
         targetElement.append(`<a name='iqb-method-${methodName}'></a>`);
         targetElement.append(`<span>Has test: ${test.length > 0} method found: ${testLine.length > 0}</span>`);
         if (test.length > 0) {
+
             if ($("a.iqb-a", test).length == 0) {
                 test.append(`<a class="iqb-a" name='${fileNoExt}'>H</a>`)
             }
-            targetElement.append(`<a class="iqb-open-test" href="${test.attr('data-path')}">[OpenTest]</a>`);
+            targetElement.append(`<a target="_blank" class="iqb-open-test" href="${test.attr('data-path')}">[OpenTest]</a>`);
             targetElement.append(`<a href='#${fileNoExt}'>[GoToTest]</a>`)
+            let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
             if (testLine.length > 0) {
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
+                targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
+
+                let whereFound = $(testLine).parents("div.file").find("div.file-header").attr("data-path");
+                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/")+1);
+
+                if (fileTestClass != expectedTestClass){
+                    targetElement.append(`<div class='iqb-error'>[18] Test Found in another class: ${fileTestClass} than expected: ${expectedTestClass}</div>`);
+                    targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+                }
             } else {
+                targetElement.append(`<div class='iqb-error'>[37] no new UT found for method ${methodName} while searching in ${expectedTestClass}</div>`);
+                targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
                 $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}${isJs ? ".spec.ts" : "Test"}</a></div>`)
             }
-            targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
         } else {
+
+            targetElement.append(`<div class='iqb-error'>[37] no new UT found for method ${methodName} while searching in ${expectedTestClass}</div>`);
             targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
 
             if (!messaged[fileNoExt]) {
@@ -634,7 +649,7 @@ $(document).ready(function () {
 
         let comment = targetElement.siblings("div.iqb-error").text();
 
-        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number").attr("data-line-number");
+        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number:last").attr("data-line-number");
         let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
         let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
@@ -674,14 +689,14 @@ $(document).ready(function () {
 
     myjQuery('body').on("click", "button.iqb-report-missing-ut", function (e) {
         let targetElement = $(e.target);
-        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number").attr("data-line-number");
+        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number:last").attr("data-line-number");
         let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
         let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
         let firstPos = href.indexOf("blob/")+5;
         let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
 
-        let comment = "[37] No direct unit test found for this method while search the corresponding .spec.ts"
+        let comment = targetElement.siblings("div.iqb-error").text();
 
         $.ajax({
             url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
