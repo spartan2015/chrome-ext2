@@ -413,6 +413,19 @@ $(document).ready(function () {
         }
     }
 
+    //EqualsVerifier.forClass() is used, it is configured with .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
+    function equalsVerifierWithSuppress(e){
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.indexOf("EqualsVerifier.forClass")-1;
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] CHECK manually that EqualsVerifier.forClass() is used, it is configured with .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)</div>")
+                targetElement.css("background-color", "lightpink")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            }
+        }
+    }
+
     function emptyCollection(e){
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf('.size()\s*==\s*0') >= 0 || e.innerText.indexOf('.length\s*==\s*0') >= 0
@@ -557,6 +570,7 @@ $(document).ready(function () {
             emptyString(e);
             loggerJive(e);
             parameterizedLogging(e);
+            equalsVerifierWithSuppress(e);
 
             let targetElement = myjQuery(e);
             let foundPublicMethod = e.innerText.match(/public[^(]*\s(.+)\(.*/);
