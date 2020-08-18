@@ -81,7 +81,7 @@ $(document).ready(function () {
             "Null is not returned by any new method to prevent NPE"
         ,
         "33":
-            "Magic values are not used."
+            "Magic values are not used. https://confluence.devfactory.com/pages/viewpage.action?pageId=328474827"
         ,
         "34":
             "API interface is immutable, unless explicitly requested by spec"
