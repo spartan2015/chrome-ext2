@@ -603,6 +603,18 @@ $(document).ready(function () {
             : myjQuery(`div#files div.file div.file-header[data-path*='Test.java']`)
         let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains('.${methodName}(')`);
 
+        let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
+
+        if (testLine.length > 0){
+            testLine.each((i, e)=>{
+                let targetElement = $(e);
+                let whereFound = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/")+1);
+                if (fileTestClass == expectedTestClass){
+                    testLine = targetElement;
+                }
+            })
+        }
 
         targetElement.append(`<a name='iqb-method-${methodName}'></a>`);
         targetElement.append(`<span>Has test: ${test.length > 0} method found: ${testLine.length > 0}</span>`);
