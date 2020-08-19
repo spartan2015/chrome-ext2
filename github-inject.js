@@ -417,7 +417,7 @@ $(document).ready(function () {
     function equalsVerifierWithSuppress(e){
         if (isJive()) {
             let targetElement = myjQuery(e);
-            let wildCard = e.innerText.indexOf("EqualsVerifier.forClass")-1;
+            let wildCard = e.innerText.indexOf("EqualsVerifier.forClass") != -1;
             if (wildCard) {
                 targetElement.append("<div class='iqb-error'>[43] CHECK manually that EqualsVerifier.forClass() is used, it is configured with .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)</div>")
                 targetElement.css("background-color", "lightpink")
@@ -631,7 +631,7 @@ $(document).ready(function () {
                 $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}${isJs ? ".spec.ts" : "Test"}</a></div>`)
             }
         } else {
-
+            let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
             targetElement.append(`<div class='iqb-error'>[37] no new UT found for method ${methodName} while searching in ${expectedTestClass}</div>`);
             targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
 
