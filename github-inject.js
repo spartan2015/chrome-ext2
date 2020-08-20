@@ -600,7 +600,7 @@ $(document).ready(function () {
 
         let test = isJs ?
             myjQuery(`div#files div.file div.file-header[data-path*='\.spec\.ts']`)
-            : myjQuery(`div#files div.file div.file-header[data-path*='Test.java']`)
+            : myjQuery(`div#files div.file div.file-header[data-path*='Test.java'],div#files div.file div.file-header[data-path*='IT']`)
         let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains('.${methodName}(')`);
 
         let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
