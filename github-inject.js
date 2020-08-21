@@ -406,6 +406,16 @@ $(document).ready(function () {
         }
     }
 
+    function alertMethodInProduction(e){
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.indexOf("alert(") >= 0
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[18] avoid using alert method in production</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function emptyString(e){
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf('==""') >= 0
@@ -548,10 +558,7 @@ $(document).ready(function () {
         checkCommitName();
 
         let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
-
         let messaged = {};
-
-
 
         codeLine.each((i,e)=>{
             let where = $(e).parents("div.file").find("div.file-header").attr("data-path");
@@ -560,6 +567,10 @@ $(document).ready(function () {
             let extension = file.substr(file.lastIndexOf(".")+1);
             if (["java","ts", "css", "js"].indexOf(extension) == -1){
                 return;
+            }
+
+            if (["ts","js"].indexOf(extension) >=0){
+                alertMethodInProduction(e);
             }
 
             noImportant(e);
