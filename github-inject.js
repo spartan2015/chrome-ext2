@@ -320,6 +320,7 @@ $(document).ready(function () {
                 dataType:"json",
                 contentType: "application/json",
                 success: function( data, textStatus, jQxhr ){
+                    myjQuery(e.target).append("Done")
                     commentElement.append("<div>[Closed]</div>")
                 },
                 error: function( jqXhr, textStatus, errorThrown ){
@@ -335,9 +336,11 @@ $(document).ready(function () {
                         dataType: "json",
                         contentType: "application/json",
                         success: function( data, textStatus, jQxhr ){
+                            myjQuery(e.target).append("Done")
                             commentElement.append("<div>[Closed]</div>")
                         },
                         error: function( jqXhr, textStatus, errorThrown ){
+                            myjQuery(e.target).append("Error")
                             commentElement.append("<div>Could not close comment</div>")
                         }
                     });
