@@ -381,7 +381,7 @@ $(document).ready(function () {
                 let wildCard = e.innerText.match(/[\^~*]+/);
                 if (wildCard) {
                     targetElement.css("background-color", "lightpink")
-                    targetElement.append("<div class='iqb-error'>[28] Flexible dependency versions are not used.</div>")
+                    targetElement.append("<div class='iqb-error'>[28] Flexible dependency versions are not used (except JVCLD projects - minor allowed).</div>")
                     targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
                 }
             })
@@ -553,6 +553,9 @@ $(document).ready(function () {
     }
 
     $("button.iqb-find-public").click(function(e){
+
+        addIqbReportForAnalyzer();
+
         wildCardsInPackageJson();
 
         checkCommitName();
@@ -669,6 +672,56 @@ $(document).ready(function () {
         }
     }
 
+    function addIqbReportForAnalyzer(){
+        $(`img[src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/1f6ab.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png"]`)
+            .parents("td")
+            .append("<input id='iqb-ui-val' value='51' size='2' /><a class='iqb-ui-add'>Add</a>");
+    }
+
+    myjQuery('body').on("click", "a.iqb-ui-add", function (e) {
+        let targetElement = $(e.target);
+        let message = targetElement.siblings("img").attr('title');
+        let code = targetElement.siblings("input").val()
+
+        let comment = `[${code}] ${message}`;
+
+        let lineNo = targetElement.parents("tr").find("td.blob-num.js-linkable-line-number:last").attr("data-line-number");
+        let position = targetElement.find("td.blob-code").find("button.js-add-line-comment").attr("data-position");
+        let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+        let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
+        let firstPos = href.indexOf("blob/")+5;
+        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+
+        $.ajax({
+            url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
+            type: "POST",
+            headers: {
+                "Accept" : "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
+                "Content-Type" : "application/json"
+            },
+            data: JSON.stringify({
+                body : `${comment}`,
+                commit_id,
+                path,
+                line : parseInt(lineNo),
+                side : "RIGHT",
+                //position: position,
+                //"start_side": "RIGHT",
+                //start_line: lineNo
+
+            }),
+            dataType:"json",
+            contentType: "application/json",
+            success: function( data, textStatus, jQxhr ){
+                targetElement.append("<div>[ADDED]</div>")
+            },
+            error: function( jqXhr, textStatus, errorThrown ){
+                alert("failed to post")
+            }
+        })
+
+    })
 
     myjQuery('body').on("click", "button.iqb-report-error", function (e) {
         let targetElement = $(e.target);
