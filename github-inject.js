@@ -423,7 +423,7 @@ $(document).ready(function () {
             return;
         }
         let targetElement = myjQuery(e);
-        let wildCard = !e.innerText.match(/let|const|require|\.log|\.debug|\.warn|throw Error\(/) && (e.innerText.match(`'.+'`) || e.innerText.match(`".+"`))
+        let wildCard = !e.innerText.match(/let|const|require|\.log|\.debug|\.warn|throw Error\(|\} from|@Lambda|import \{/) && (e.innerText.match(`'.+'`) || e.innerText.match(`".+"`))
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[33] Magic values are not used. https://confluence.devfactory.com/pages/viewpage.action?pageId=328474827</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -606,6 +606,7 @@ $(document).ready(function () {
             if (["java","ts", "css", "js"].indexOf(extension) == -1){
                 return;
             }
+            let isJava = file.endsWith(".java");
 
             if (["ts","js"].indexOf(extension) >=0){
                 alertMethodInProduction(e);
@@ -626,7 +627,7 @@ $(document).ready(function () {
             equalsVerifierWithSuppress(e);
 
             let targetElement = myjQuery(e);
-            let foundPublicMethod = e.innerText.match(/public[^(]+\s(.+)\(.*/);
+            let foundPublicMethod = isJava ? e.innerText.match(/public[^(]+\s(.+)\(.*/) :  e.innerText.match(/public\s(.+)\(.*/);
             if ( foundPublicMethod ){
                 processPublicMethod(foundPublicMethod, targetElement, messaged);
             }
