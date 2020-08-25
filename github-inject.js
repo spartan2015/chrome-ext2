@@ -268,6 +268,21 @@ $(document).ready(function () {
             `There is no whitebox testing`,
             `ExpectedExceptions rule is used`,
             `There is no log.debug and warning (except if tracking a real issue)`,
+        ],
+        "jive-mobile-graphql" :[
+            `Rules for code: https://docs.google.com/document/d/1kWcAAst8Ith7gldyo-IyL_wXbG9WQeOcxvMIFWIEaLQ/edit#heading=h.4rfapmbadyt`,
+            `one handler per file - same file name as handler name and handler[type.field]`,
+            `request resolver: type.field.request.vtl`,
+            `response resolver: type.field.response.vtl`,
+            `tf: resolver.type.field.tf`,
+            `all non root query handlers must be batch resolvers`,
+            `Type.graphql`,
+            `every non primitive field must have normalizer but you can use a generic normalizer (addGenericNormalizers(){ addGenericNormalizer(entityTyoes.Blog.graphqlName,...)}`,
+            `normalizers in utils/fieldNormalizers`,
+            `normalizer should have Type.js naming convention`,
+            `normalizer should call parent normalizer`,
+            `@Depprecated fields are excluded`,
+            `implement handle in single function - do not extract: common.addHandler(__filename, async requestContext=>{ ....})`,
         ]
     }
 
@@ -393,6 +408,26 @@ $(document).ready(function () {
         if (!match){
             targetElement.css("background-color", "lightpink")
             targetElement.append("<div class='iqb-error'>[43] PR title must match JIRA-KEY description</div>")
+        }
+    }
+
+    function isJsOrJava(e){
+        let targetElement = myjQuery(e);
+        let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
+        let file = where.substr(where.lastIndexOf("/") + 1);
+        return ["js,ts,java"].find(s=>file.endsWith(s));
+    }
+
+    function magicNumbers(e){
+        if (!isJsOrJava()){
+            return;
+        }
+        let targetElement = myjQuery(e);
+        let wildCard = !e.innerText.match(/let|const|require|\.log|\.debug|\.warn|throw Error\(/) && (e.innerText.match(`'.+'`) || e.innerText.match(`".+"`))
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[33] Magic values are not used. https://confluence.devfactory.com/pages/viewpage.action?pageId=328474827</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
         }
     }
 
@@ -576,6 +611,7 @@ $(document).ready(function () {
                 alertMethodInProduction(e);
             }
 
+            magicNumbers(e);
             noImportant(e);
             noLogWarnOrDebug(e)
             noWhitebox(e)
