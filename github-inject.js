@@ -431,6 +431,16 @@ $(document).ready(function () {
         }
     }
 
+    function noConsoleOnFrontend(e) {
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match(/console\.log|console\.error/);
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[47]\tNo console logs are found on javascript-based code, that are visible/available to end users</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function noLogWarnOrDebug(e){
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("log.warn") >= 0 || e.innerText.indexOf("log.debug") >= 0
@@ -610,12 +620,14 @@ $(document).ready(function () {
 
             if (["ts","js"].indexOf(extension) >=0){
                 alertMethodInProduction(e);
+                noConsoleOnFrontend(e);
+            }
+            if (["css","scss"].indexOf(extension) >=0) {
+                noImportant(e);
             }
 
             magicNumbers(e);
-            noImportant(e);
             noLogWarnOrDebug(e)
-            noWhitebox(e)
             hasEqualsVerifier(e);
             interruptedException(e)
             extendingJiveExceptions(e);
@@ -624,7 +636,10 @@ $(document).ready(function () {
             emptyString(e);
             loggerJive(e);
             parameterizedLogging(e);
+
+            // Test
             equalsVerifierWithSuppress(e);
+            noWhitebox(e)
 
             let targetElement = myjQuery(e);
             let foundPublicMethod = isJava ? e.innerText.match(/public[^(]+\s(.+)\(.*/) :  e.innerText.match(/public\s(.+)\(.*/);
