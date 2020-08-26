@@ -63,7 +63,7 @@ $(document).ready(function () {
 
     $("textarea.iqb-matrix").val(localStorage[matrixKey])
 
-    $("div#descriptionmodule").append(`
+    $("div#descriptionmodule").prepend(`
     <textarea class="iqb-matrix" />
     <button class="iqb-matrix-set">Set</button>  
     <button class="iqb-matrix-get">Get</button>
@@ -82,7 +82,14 @@ $(document).ready(function () {
     
     <button class="iqb-approve-oop">ApproveOOP</button>
     
-    <button class="iqb-mapmanual">MapManual</button>
+    <button class="iqb-mapmanual">MapManual</button><br/>
+    
+    <button class="iqb-cr-approve">CR Approve</button>
+    <button class="iqb-cr-comment">CR Comment</button>
+    <button class="iqb-cr-skip">CR Skip</button>
+    <button class="iqb-cr-reject">CR Reject</button>
+    
+    
 `);
 
     function getEpicKey() {
@@ -173,6 +180,86 @@ $(document).ready(function () {
         });
 
         xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-approve").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
+        xhr.open('GET', 'http://localhost:3000/cr-approve?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-comment").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
+        xhr.open('GET', 'http://localhost:3000/cr-comments?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-reject").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
+        xhr.open('GET', 'http://localhost:3000/cr-reject?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-skip").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
+        xhr.open('GET', 'http://localhost:3000/cr-skip?key=' + key , true);
         xhr.send();
 
     });
