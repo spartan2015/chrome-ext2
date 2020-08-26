@@ -56,6 +56,13 @@ function initializeMenu() {
         <div class="iqb-menu">
             <button id="directAssignMe">DirectAssigneMe</button>
             <button id="directAssignDsaldiaz">DirectAssigneDsaldiaz</button>
+            
+            <button class="iqb-cr-approve">CR Approve</button>
+            <button class="iqb-cr-comment">CR Comment</button>
+            <button class="iqb-cr-skip">CR Skip</button>
+            <button class="iqb-cr-reject">CR Reject</button>
+            <button class="iqb-approve-oop">ApproveOOP</button>
+
             <!--<button id="assignMe">AssignMe</button>
             <button id="assignDiaz">AssignDiaz</button>
             <button id="myFqaApprove">FQA Approve</button>
@@ -136,6 +143,112 @@ function initializeMenu() {
             document.getElementById("resetAuth").addEventListener('click', function () {
                 delete localStorage[authKey];
             }, false);
+
+
+    $("button.iqb-approve-oop").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+
+        xhr.open('GET', 'http://localhost:3000/fs-approve-oop?key=' + key , true);
+        xhr.send();
+
+
+    });
+
+    $("button.iqb-approve").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+
+        xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-approve").click(function (e) {
+        if ($(e.target).text().contains("-SENT")){
+            return
+        }
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+
+        xhr.open('GET', 'http://localhost:3000/cr-approve?key=' + key , true);
+        xhr.send();
+
+    });
+
+    function getJiraTicket() {
+        return location.href.substr(location.href.lastIndexOf("/") + 1);
+    }
+
+    $("button.iqb-cr-comment").click(function (e) {
+        if ($(e.target).text().contains("-SENT")) {
+            return
+        }
+            var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+
+        xhr.open('GET', 'http://localhost:3000/cr-comments?key=' + key , true);
+        xhr.send();
+
+    });
+
+    $("button.iqb-cr-reject").click(function (e) {
+        if ($(e.target).text().contains("-SENT")) {
+            return
+        }
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+        xhr.open('GET', 'http://localhost:3000/cr-reject?key=' + key , true);
+        xhr.send();
+
+    });
+
+
 
         function attach(method, actionName, elementId, endpointPattern) {
             if (document.getElementById(elementId))
