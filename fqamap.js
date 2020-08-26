@@ -152,14 +152,15 @@ $(document).ready(function () {
         });//(x) [QE FQA Review|${sheetLink}]
 
         xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
+            $(e.target).append("-SENT")
         });
 
         let message = `        
         |FS title, description and other fields are coherent with feature story scope (defined by the mapping)\t|no|\t${document.querySelector('div.iqb-not-found').innerText}|
         `;
         console.log(message)
-       xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
+
+        xhr.open('GET', 'http://localhost:3000/fs-reject?key=' + key +"&message="+encodeURIComponent(message), true);
         xhr.send();
 
     });
@@ -172,12 +173,10 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
-        });
+        $(e.target).append("-SENT")
 
         xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
         xhr.send();
@@ -192,12 +191,10 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
-        });
+        $(e.target).append("-SENT")
 
         xhr.open('GET', 'http://localhost:3000/cr-approve?key=' + key , true);
         xhr.send();
@@ -212,12 +209,10 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
-        });
+        $(e.target).append("-SENT")
 
         xhr.open('GET', 'http://localhost:3000/cr-comments?key=' + key , true);
         xhr.send();
@@ -232,18 +227,16 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
-        });
-
+        $(e.target).append("-SENT")
         xhr.open('GET', 'http://localhost:3000/cr-reject?key=' + key , true);
         xhr.send();
 
     });
 
+    console.error("fqamap sources");
     $("button.iqb-cr-skip").click(function (e) {
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
@@ -252,12 +245,10 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-            $(e).append("-DONE")
-        });
+        $(e.target).append("-SENT")
 
         xhr.open('GET', 'http://localhost:3000/cr-skip?key=' + key , true);
         xhr.send();
@@ -272,12 +263,10 @@ $(document).ready(function () {
         let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
 
         xhr.addEventListener("error", function (error) {
-            alert('Error executing: ' + JSON.stringify(xhr));
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
         });
 
-        xhr.addEventListener("success", function (error) {
-           $(e).append("-DONE")
-        });
+        $(e.target).append("-SENT")
 
         xhr.open('GET', 'http://localhost:3000/fs-approve-oop?key=' + key , true);
         xhr.send();
