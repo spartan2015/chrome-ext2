@@ -80,6 +80,8 @@ $(document).ready(function () {
     <button class="iqb-reject">Reject</button>
     <button class="iqb-approve">Approve</button>
     
+    <button class="iqb-approve-oop">ApproveOOP</button>
+    
     <button class="iqb-mapmanual">MapManual</button>
 `);
 
@@ -131,7 +133,7 @@ $(document).ready(function () {
 
     });
 
-    $("button.iqb-reject").click(function () {
+    $("button.iqb-reject").click(function (e) {
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
 
@@ -141,6 +143,11 @@ $(document).ready(function () {
         xhr.addEventListener("error", function (error) {
             alert('Error executing: ' + JSON.stringify(xhr));
         });//(x) [QE FQA Review|${sheetLink}]
+
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
         let message = `        
         |FS title, description and other fields are coherent with feature story scope (defined by the mapping)\t|no|\t${document.querySelector('div.iqb-not-found').innerText}|
         `;
@@ -150,7 +157,7 @@ $(document).ready(function () {
 
     });
 
-    $("button.iqb-approve").click(function () {
+    $("button.iqb-approve").click(function (e) {
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
 
@@ -161,8 +168,33 @@ $(document).ready(function () {
             alert('Error executing: ' + JSON.stringify(xhr));
         });
 
+        xhr.addEventListener("success", function (error) {
+            $(e).append("-DONE")
+        });
+
         xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
         xhr.send();
+
+    });
+
+    $("button.iqb-approve-oop").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            alert('Error executing: ' + JSON.stringify(xhr));
+        });
+
+        xhr.addEventListener("success", function (error) {
+           $(e).append("-DONE")
+        });
+
+        xhr.open('GET', 'http://localhost:3000/fs-approve-oop?key=' + key , true);
+        xhr.send();
+
 
     });
 

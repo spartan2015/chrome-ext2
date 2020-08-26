@@ -1,4 +1,12 @@
 var myjQuery = $;
+
+function isTest(file) {
+    return file.substring(0, file.lastIndexOf("."))
+            .endsWith("Test")
+        || file.endsWith(".spec.ts")
+        || file.endsWith(".test.ts");
+}
+
 $(document).ready(function () {
     window.vasQ = $;
     let rules = {
@@ -414,12 +422,12 @@ $(document).ready(function () {
     function isJsOrJava(e){
         let targetElement = myjQuery(e);
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
-        let file = where.substr(where.lastIndexOf("/") + 1);
-        return ["js,ts,java"].find(s=>file.endsWith(s));
+        let file = where ? where.substr(where.lastIndexOf("/") + 1) : where;
+        return ["js,ts,java"].find(s=> file && file.endsWith(s));
     }
 
     function magicNumbers(e){
-        if (!isJsOrJava()){
+        if (!isJsOrJava(e)){
             return;
         }
         let targetElement = myjQuery(e);
@@ -655,11 +663,7 @@ $(document).ready(function () {
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
 
-        let isTest =
-                file.substring(0, file.lastIndexOf("."))
-                    .endsWith("Test")
-                ||
-                file.endsWith(".spec.ts");
+        let isTest = isTest(file);
 
         let isJs = file.endsWith(".ts");
         let fileNoExt = file.substring(0, file.lastIndexOf("."))
