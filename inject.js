@@ -185,9 +185,6 @@ function initializeMenu() {
     });
 
     $("button.iqb-cr-approve").click(function (e) {
-        if ($(e.target).text().contains("-SENT")){
-            return
-        }
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
 
@@ -210,10 +207,7 @@ function initializeMenu() {
     }
 
     $("button.iqb-cr-comment").click(function (e) {
-        if ($(e.target).text().contains("-SENT")) {
-            return
-        }
-            var key =  getJiraTicket();
+        var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
 
         let sheets = $("span[title^=FSReview_] a");
@@ -231,9 +225,6 @@ function initializeMenu() {
     });
 
     $("button.iqb-cr-reject").click(function (e) {
-        if ($(e.target).text().contains("-SENT")) {
-            return
-        }
         var key =  getJiraTicket();
         var xhr = new XMLHttpRequest;
 
@@ -250,6 +241,22 @@ function initializeMenu() {
 
     });
 
+    $("button.iqb-cr-skip").click(function (e) {
+        var key =  getJiraTicket();
+        var xhr = new XMLHttpRequest;
+
+        let sheets = $("span[title^=FSReview_] a");
+        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
+
+        xhr.addEventListener("error", function (error) {
+            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
+        });
+
+        $(e.target).append("-SENT")
+        xhr.open('GET', 'http://localhost:3000/cr-skip?key=' + key , true);
+        xhr.send();
+
+    });
 
 
         function attach(method, actionName, elementId, endpointPattern) {

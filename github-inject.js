@@ -1,13 +1,8 @@
 var myjQuery = $;
 
-function isTest(file) {
-    return file.substring(0, file.lastIndexOf("."))
-            .endsWith("Test")
-        || file.endsWith(".spec.ts")
-        || file.endsWith(".test.ts");
-}
 
 $(document).ready(function () {
+
     window.vasQ = $;
     let rules = {
         "2":
@@ -319,6 +314,8 @@ $(document).ready(function () {
         }
         return localStorage[key];
     }
+
+
 
     function applyCloseButtons(){
 
@@ -657,17 +654,21 @@ $(document).ready(function () {
         })
     })
 
+    function isTest(file) {
+        return file.substring(0, file.lastIndexOf("."))
+                .endsWith("Test")
+            || file.endsWith(".spec.ts")
+            || file.endsWith(".test.ts");
+    }
+
     function processPublicMethod(foundPublicMethod, targetElement, messaged) {
         let methodName = foundPublicMethod[1];
 
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
-
-        let isTest = isTest(file);
-
         let isJs = file.endsWith(".ts");
         let fileNoExt = file.substring(0, file.lastIndexOf("."))
-        if (isTest) {
+        if (isTest(file)) {
             return;
         }
 

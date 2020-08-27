@@ -79,17 +79,7 @@ $(document).ready(function () {
     <button class="iqb-map">Map</button>    
     <button class="iqb-reject">Reject</button>
     <button class="iqb-approve">Approve</button>
-    
-    <button class="iqb-approve-oop">ApproveOOP</button>
-    
     <button class="iqb-mapmanual">MapManual</button><br/>
-    
-    <button class="iqb-cr-approve">CR Approve</button>
-    <button class="iqb-cr-comment">CR Comment</button>
-    <button class="iqb-cr-skip">CR Skip</button>
-    <button class="iqb-cr-reject">CR Reject</button>
-    
-    
 `);
 
     function getEpicKey() {
