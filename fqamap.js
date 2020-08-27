@@ -63,7 +63,7 @@ $(document).ready(function () {
 
     $("textarea.iqb-matrix").val(localStorage[matrixKey])
 
-    $("div#descriptionmodule").prepend(`
+    $("nav.aui-header").prepend(`
     <textarea class="iqb-matrix" />
     <button class="iqb-matrix-set">Set</button>  
     <button class="iqb-matrix-get">Get</button>
@@ -180,97 +180,6 @@ $(document).ready(function () {
 
         xhr.open('GET', 'http://localhost:3000/fs?key=' + key , true);
         xhr.send();
-
-    });
-
-    $("button.iqb-cr-approve").click(function (e) {
-        var key =  getJiraTicket();
-        var xhr = new XMLHttpRequest;
-
-        let sheets = $("span[title^=FSReview_] a");
-        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
-
-        xhr.addEventListener("error", function (error) {
-            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
-        });
-
-        $(e.target).append("-SENT")
-
-        xhr.open('GET', 'http://localhost:3000/cr-approve?key=' + key , true);
-        xhr.send();
-
-    });
-
-    $("button.iqb-cr-comment").click(function (e) {
-        var key =  getJiraTicket();
-        var xhr = new XMLHttpRequest;
-
-        let sheets = $("span[title^=FSReview_] a");
-        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
-
-        xhr.addEventListener("error", function (error) {
-            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
-        });
-
-        $(e.target).append("-SENT")
-
-        xhr.open('GET', 'http://localhost:3000/cr-comments?key=' + key , true);
-        xhr.send();
-
-    });
-
-    $("button.iqb-cr-reject").click(function (e) {
-        var key =  getJiraTicket();
-        var xhr = new XMLHttpRequest;
-
-        let sheets = $("span[title^=FSReview_] a");
-        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
-
-        xhr.addEventListener("error", function (error) {
-            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
-        });
-
-        $(e.target).append("-SENT")
-        xhr.open('GET', 'http://localhost:3000/cr-reject?key=' + key , true);
-        xhr.send();
-
-    });
-
-    console.error("fqamap sources");
-    $("button.iqb-cr-skip").click(function (e) {
-        var key =  getJiraTicket();
-        var xhr = new XMLHttpRequest;
-
-        let sheets = $("span[title^=FSReview_] a");
-        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
-
-        xhr.addEventListener("error", function (error) {
-            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
-        });
-
-        $(e.target).append("-SENT")
-
-        xhr.open('GET', 'http://localhost:3000/cr-skip?key=' + key , true);
-        xhr.send();
-
-    });
-
-    $("button.iqb-approve-oop").click(function (e) {
-        var key =  getJiraTicket();
-        var xhr = new XMLHttpRequest;
-
-        let sheets = $("span[title^=FSReview_] a");
-        let sheetLink = $(sheets.get(sheets.length-1)).attr("href")
-
-        xhr.addEventListener("error", function (error) {
-            $(e.target).append("-ERROR: " + JSON.stringify(xhr))
-        });
-
-        $(e.target).append("-SENT")
-
-        xhr.open('GET', 'http://localhost:3000/fs-approve-oop?key=' + key , true);
-        xhr.send();
-
 
     });
 
