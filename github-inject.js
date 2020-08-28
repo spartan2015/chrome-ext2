@@ -618,7 +618,7 @@ $(document).ready(function () {
             let file = where.substr(where.lastIndexOf("/") + 1);
 
             let extension = file.substr(file.lastIndexOf(".")+1);
-            if (["java","ts", "css", "js"].indexOf(extension) == -1){
+            if (["java","ts", "css", "js","scss","html"].indexOf(extension) == -1){
                 return;
             }
             let isJava = file.endsWith(".java");
@@ -627,7 +627,7 @@ $(document).ready(function () {
                 alertMethodInProduction(e);
                 noConsoleOnFrontend(e);
             }
-            if (["css","scss"].indexOf(extension) >=0) {
+            if (["css","scss","html"].indexOf(extension) >=0) {
                 noImportant(e);
             }
 
@@ -730,12 +730,38 @@ $(document).ready(function () {
     }
 
     function addIqbReportForAnalyzer(){
-        $(`img[src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/1f6ab.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png"]`)
-            .parents("td")
-            .append("<input id='iqb-ui-val' value='51' size='2' /><a class='iqb-ui-add'>Add</a>");
+        var els = $(`img[src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/1f6ab.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png"]`)
+        els.each((i,e)=>{
+            let targetElement =  $(e);
+            let message = targetElement.attr('title');
+            let code = 51;
+
+            if (message.indexOf("JS: Redundant parentheses/ braces")>=0){
+                code = 23;
+            }
+            if (message.indexOf("JS: Avoid loose equality/inequality")>=0){
+                code = 18;
+            }
+
+            $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>ReportMissingTest</button>`);
+
+          $(e)  .parents("td")
+              .append("<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>")
+              .append(`[<a class="iqb-ui-view">V</a>]`)
+
+        });
+
     }
 
-    myjQuery('body').on("click", "a.iqb-ui-add", function (e) {
+    myjQuery('body').on("click", "a.iqb-ui-view", function (e) {
+        let targetElement = $(e.target);
+        let message = targetElement.siblings("img").attr('title');
+        let code = targetElement.siblings("input").val()
+
+        window.open(`https://confluence.devfactory.com/dosearchsite.action?queryString=${encodeURIComponent(message)}`)
+     });
+
+        myjQuery('body').on("click", "a.iqb-ui-add", function (e) {
         let targetElement = $(e.target);
         let message = targetElement.siblings("img").attr('title');
         let code = targetElement.siblings("input").val()
