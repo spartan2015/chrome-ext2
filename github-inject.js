@@ -735,13 +735,31 @@ $(document).ready(function () {
             let targetElement =  $(e);
             let message = targetElement.attr('title');
             let code = 51;
+            //ignore some - for which we have better
+            if (message.indexOf("asdasd")>=0){
+                return;
+            }
+
+            if (message.indexOf("JS: Console.Log() in Production")>=0){
+                code = 47;
+            }
 
             if (message.indexOf("JS: Redundant parentheses/ braces")>=0
                  || message.indexOf("Unnecessary Braces Surrounding Annotation Parameter")>=0
+                 || message.indexOf("JS: Equal Margin/ Padding using 4 values")>=0
+                 || message.indexOf("JS: Object Literal Shorthand Syntax")>=0
             ){
                 code = 23;
             }
-            if (message.indexOf("JS: Avoid loose equality/inequality")>=0){
+            if (    message.indexOf("JS: Avoid loose equality/inequality")>=0
+                || message.indexOf("JS: String declaration with double quotes")>=0
+                || message.indexOf("JS: Prefer `Const` Instead of `Let` or `Var` (ES/TS/JS)")>=0
+                || message.indexOf("JS: Missing semicolon")>=0
+                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: There should be no space after")>=0
+                || message.indexOf("JS: Double Quotes in @import Statements")>=0
+                || message.indexOf("JS: String concatenation to build a string")>=0
+                || message.indexOf("JS: Missing Blank Line")>=0
+            ){
                 code = 18;
             }
 
