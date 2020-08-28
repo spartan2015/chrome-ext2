@@ -719,7 +719,7 @@ $(document).ready(function () {
         } else {
             let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
             targetElement.append(`<div class='iqb-error'>[37] no new UT found for method ${methodName} while searching in ${expectedTestClass}</div>`);
-            targetElement.append("<button class='iqb-report-missing-ut'>ReportMissingTest</button>")
+            targetElement.append("<button class='iqb-report-missing-ut'>Report</button>")
 
             if (!messaged[fileNoExt]) {
                 targetElement.css("background-color", "lightpink");
@@ -736,17 +736,20 @@ $(document).ready(function () {
             let message = targetElement.attr('title');
             let code = 51;
 
-            if (message.indexOf("JS: Redundant parentheses/ braces")>=0){
+            if (message.indexOf("JS: Redundant parentheses/ braces")>=0
+                 || message.indexOf("Unnecessary Braces Surrounding Annotation Parameter")>=0
+            ){
                 code = 23;
             }
             if (message.indexOf("JS: Avoid loose equality/inequality")>=0){
                 code = 18;
             }
 
-            $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>ReportMissingTest</button>`);
+
+            $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>Report</button>`);
 
           $(e)  .parents("td")
-              .append("<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>")
+              .append(`<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>`)
               .append(`[<a class="iqb-ui-view">V</a>]`)
 
         });
