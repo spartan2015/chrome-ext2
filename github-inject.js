@@ -511,6 +511,18 @@ $(document).ready(function () {
         }
     }
 
+    function commentedCode(e){
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.indexOf("//") >=0
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[35] There is no commented code</div>")
+                targetElement.css("background-color", "lightpink")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            }
+        }
+    }
+
     function loggerJive(e){
         if (isJive()) {
             let targetElement = myjQuery(e);
@@ -632,6 +644,7 @@ $(document).ready(function () {
             }
 
             magicNumbers(e);
+            commentedCode(e);
             noLogWarnOrDebug(e)
             hasEqualsVerifier(e);
             interruptedException(e)
@@ -751,7 +764,7 @@ $(document).ready(function () {
             ){
                 code = 23;
             }
-            if (    message.indexOf("JS: Avoid loose equality/inequality")>=0
+            if (message.indexOf("JS: Avoid loose equality/inequality")>=0
                 || message.indexOf("JS: String declaration with double quotes")>=0
                 || message.indexOf("JS: Prefer `Const` Instead of `Let` or `Var` (ES/TS/JS)")>=0
                 || message.indexOf("JS: Missing semicolon")>=0
@@ -759,6 +772,7 @@ $(document).ready(function () {
                 || message.indexOf("JS: Double Quotes in @import Statements")>=0
                 || message.indexOf("JS: String concatenation to build a string")>=0
                 || message.indexOf("JS: Missing Blank Line")>=0
+                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: Operator")>=0
             ){
                 code = 18;
             }
