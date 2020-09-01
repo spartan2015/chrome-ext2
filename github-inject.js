@@ -773,10 +773,15 @@ $(document).ready(function () {
                 || message.indexOf("JS: String concatenation to build a string")>=0
                 || message.indexOf("JS: Missing Blank Line")>=0
                 || message.indexOf("JS: Formatting Spacing - ES/TS/JS: Operator")>=0
+                || message.indexOf("JS: Formatting Spacing")>=0
             ){
                 code = 18;
             }
 
+            if (message.indexOf("Unused Imports")>=0
+            ){
+                code = 22;
+            }
 
             $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>Report</button>`);
 
