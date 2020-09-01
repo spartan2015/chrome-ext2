@@ -248,14 +248,14 @@ $(document).ready(function () {
      */
 
     let lookoutFor = {
-        "5k-sococo" : [
+        "5k-sococo": [
             "Merge the code when done"
         ],
-        "devfactory-codeserver-framework":[
+        "devfactory-codeserver-framework": [
             "LOTS OF PCA REJECTIONS - CHECK checklist PCA rules always!",
             "method visibility order"
         ],
-        "aurea-jivecloud-jivedaily-reactnative" : [
+        "aurea-jivecloud-jivedaily-reactnative": [
             "Allows dangling comma"
         ],
         "jive-cloud-application": [
@@ -272,7 +272,7 @@ $(document).ready(function () {
             `ExpectedExceptions rule is used`,
             `There is no log.debug and warning (except if tracking a real issue)`,
         ],
-        "jive-mobile-graphql" :[
+        "jive-mobile-graphql": [
             `Rules for code: https://docs.google.com/document/d/1kWcAAst8Ith7gldyo-IyL_wXbG9WQeOcxvMIFWIEaLQ/edit#heading=h.4rfapmbadyt`,
             `one handler per file - same file name as handler name and handler[type.field]`,
             `request resolver: type.field.request.vtl`,
@@ -294,11 +294,11 @@ $(document).ready(function () {
     let repoName = parts[2]
     let no = parseInt(parts[3])
 
-    function isJive(){
+    function isJive() {
         return repoName == "jive-cloud-application";
     }
 
-    let rulesString = lookoutFor[repoName] ? lookoutFor[repoName].map(e=>`<li>${e}</li>`).join("") : ""
+    let rulesString = lookoutFor[repoName] ? lookoutFor[repoName].map(e => `<li>${e}</li>`).join("") : ""
     $("div.gh-header").append(`       
         <div style="background-color:lightpink">Repo: ${repoName} 
             <ul>
@@ -316,8 +316,7 @@ $(document).ready(function () {
     }
 
 
-
-    function applyCloseButtons(){
+    function applyCloseButtons() {
 
         $(".timeline-comment-actions").append("<button class='iqb-comment-close'>Close</button>");
         myjQuery('body').on("click", "button.iqb-comment-close", function (e) {
@@ -332,18 +331,18 @@ $(document).ready(function () {
                 url: `https://api.github.com/repos/${user}/${repoName}/pulls/comments/${commentId}`,
                 type: "PATCH",
                 headers: {
-                    "Accept" : "application/vnd.github.v3+json",
-                    "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
-                    "Content-Type" : "application/json"
+                    "Accept": "application/vnd.github.v3+json",
+                    "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                    "Content-Type": "application/json"
                 },
-                data: JSON.stringify({ body : `${comment} [closed]` }),
-                dataType:"json",
+                data: JSON.stringify({body: `${comment} [closed]`}),
+                dataType: "json",
                 contentType: "application/json",
-                success: function( data, textStatus, jQxhr ){
+                success: function (data, textStatus, jQxhr) {
                     myjQuery(e.target).append("Done")
                     commentElement.append("<div>[Closed]</div>")
                 },
-                error: function( jqXhr, textStatus, errorThrown ){
+                error: function (jqXhr, textStatus, errorThrown) {
                     $.ajax({
                         url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments/${commentId}/replies`,
                         type: "POST",
@@ -352,14 +351,14 @@ $(document).ready(function () {
                             "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
                             "Content-Type": "application/json"
                         },
-                        data:`{"body": "${comment} [closed]"}`,
+                        data: `{"body": "${comment} [closed]"}`,
                         dataType: "json",
                         contentType: "application/json",
-                        success: function( data, textStatus, jQxhr ){
+                        success: function (data, textStatus, jQxhr) {
                             myjQuery(e.target).append("Done")
                             commentElement.append("<div>[Closed]</div>")
                         },
-                        error: function( jqXhr, textStatus, errorThrown ){
+                        error: function (jqXhr, textStatus, errorThrown) {
                             myjQuery(e.target).append("Error")
                             commentElement.append("<div>Could not close comment</div>")
                         }
@@ -376,13 +375,13 @@ $(document).ready(function () {
 
         $.ajax({
             url: `/repos/${user}/${repoName}/pulls/${no}/comments`,
-            type:"POST",
+            type: "POST",
             headers: {
-                "Accept" : "application/vnd.github.v3+json",
-                "Authorization": btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa"))
+                "Accept": "application/vnd.github.v3+json",
+                "Authorization": btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa"))
             },
-            data:{ body : `${comment} [closed]` },
-            dataType:"json"
+            data: {body: `${comment} [closed]`},
+            dataType: "json"
         })
 
     })
@@ -390,8 +389,8 @@ $(document).ready(function () {
     $("div.pr-toolbar").append("<button class='iqb-find-public'>Find Public Test</button>")
 
     $("div.pr-toolbar").append("<button class='iqb-find-public'>AppendCloseButtons</button>")
-    $("button.iqb-find-public").click(function(e){
-       applyCloseButtons();
+    $("button.iqb-find-public").click(function (e) {
+        applyCloseButtons();
     })
 
     function wildCardsInPackageJson() {
@@ -407,24 +406,24 @@ $(document).ready(function () {
             })
     }
 
-    function checkCommitName(){
+    function checkCommitName() {
         let targetElement = $("span.js-issue-title");
         let match = targetElement.text().match("[A-Z0-9]+-[0-9]+.+");
-        if (!match){
+        if (!match) {
             targetElement.css("background-color", "lightpink")
             targetElement.append("<div class='iqb-error'>[43] PR title must match JIRA-KEY description</div>")
         }
     }
 
-    function isJsOrJava(e){
+    function isJsOrJava(e) {
         let targetElement = myjQuery(e);
         let where = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let file = where ? where.substr(where.lastIndexOf("/") + 1) : where;
-        return ["js,ts,java"].find(s=> file && file.endsWith(s));
+        return ["js,ts,java"].find(s => file && file.endsWith(s));
     }
 
-    function magicNumbers(e){
-        if (!isJsOrJava(e)){
+    function magicNumbers(e) {
+        if (!isJsOrJava(e)) {
             return;
         }
         let targetElement = myjQuery(e);
@@ -446,7 +445,7 @@ $(document).ready(function () {
         }
     }
 
-    function noLogWarnOrDebug(e){
+    function noLogWarnOrDebug(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("log.warn") >= 0 || e.innerText.indexOf("log.debug") >= 0
         if (wildCard) {
@@ -456,7 +455,7 @@ $(document).ready(function () {
         }
     }
 
-    function alertMethodInProduction(e){
+    function alertMethodInProduction(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("alert(") >= 0
         if (wildCard) {
@@ -466,7 +465,7 @@ $(document).ready(function () {
         }
     }
 
-    function emptyString(e){
+    function emptyString(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf('==""') >= 0
         if (wildCard) {
@@ -477,7 +476,7 @@ $(document).ready(function () {
     }
 
     //EqualsVerifier.forClass() is used, it is configured with .suppress(Warning.ALL_FIELDS_SHOULD_BE_USED)
-    function equalsVerifierWithSuppress(e){
+    function equalsVerifierWithSuppress(e) {
         if (isJive()) {
             let targetElement = myjQuery(e);
             let wildCard = e.innerText.indexOf("EqualsVerifier.forClass") != -1;
@@ -489,7 +488,7 @@ $(document).ready(function () {
         }
     }
 
-    function emptyCollection(e){
+    function emptyCollection(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf('.size()\s*==\s*0') >= 0 || e.innerText.indexOf('.length\s*==\s*0') >= 0
         if (wildCard) {
@@ -499,7 +498,7 @@ $(document).ready(function () {
         }
     }
 
-    function extendingJiveExceptions(e){
+    function extendingJiveExceptions(e) {
         if (isJive()) {
             let targetElement = myjQuery(e);
             let wildCard = e.innerText.match("class.+Exception")
@@ -511,10 +510,15 @@ $(document).ready(function () {
         }
     }
 
-    function commentedCode(e){
+    function commentedCode(e) {
         if (isJive()) {
             let targetElement = myjQuery(e);
-            let wildCard = e.innerText.indexOf("//") >=0
+            let wildCard = e.innerText.indexOf("//") >= 0 &&
+                !(
+                    e.innerText.indexOf("Assert") >= 0
+                    || e.innerText.indexOf("Act") >= 0
+                    || e.innerText.indexOf("Arrange") >= 0
+                )
             if (wildCard) {
                 targetElement.append("<div class='iqb-error'>[35] There is no commented code</div>")
                 targetElement.css("background-color", "lightpink")
@@ -523,7 +527,7 @@ $(document).ready(function () {
         }
     }
 
-    function loggerJive(e){
+    function loggerJive(e) {
         if (isJive()) {
             let targetElement = myjQuery(e);
             let wildCard = e.innerText.match("Logger")
@@ -535,18 +539,18 @@ $(document).ready(function () {
         }
     }
 
-    function parameterizedLogging(e){
-            let targetElement = myjQuery(e);
-            let wildCard = e.innerText.match("log\..+\\+.+")
-            if (wildCard) {
-                targetElement.append("<div class='iqb-error'>[43] Use parameterized logging only. no string concat</div>")
-                targetElement.css("background-color", "lightpink")
-                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
-            }
+    function parameterizedLogging(e) {
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match("log\..+\\+.+")
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[43] Use parameterized logging only. no string concat</div>")
+            targetElement.css("background-color", "lightpink")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+        }
     }
 
 
-    function rethrowExceptions(e){
+    function rethrowExceptions(e) {
         if (isJive()) {
             let targetElement = myjQuery(e);
             let wildCard = e.innerText.match("throw .+")
@@ -558,7 +562,7 @@ $(document).ready(function () {
         }
     }
 
-    function interruptedException(e){
+    function interruptedException(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("InterruptedException") >= 0
         if (wildCard) {
@@ -571,7 +575,7 @@ $(document).ready(function () {
         }
     }
 
-    function noWhitebox(e){
+    function noWhitebox(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("Whitebox") >= 0 || e.innerText.indexOf("PowerMock") >= 0
         if (wildCard) {
@@ -581,7 +585,7 @@ $(document).ready(function () {
         }
     }
 
-    function noImportant(e){
+    function noImportant(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("!important") >= 0
         if (wildCard) {
@@ -591,7 +595,7 @@ $(document).ready(function () {
         }
     }
 
-    function hasEqualsVerifier(e){
+    function hasEqualsVerifier(e) {
         let targetElement = myjQuery(e);
         let wildCard = targetElement.text().match(/public boolean (equals)/) || e.innerText.match(/public int (hashCode)/)
         if (wildCard) {
@@ -603,10 +607,10 @@ $(document).ready(function () {
                 myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}\.spec\.ts']`)
                 : myjQuery(`div#files div.file div.file-header[data-path*='${fileNoExt}Test']`)
             let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains(${methodName})`);
-            if (testLine.length > 0){
+            if (testLine.length > 0) {
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                 targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
-            }else{
+            } else {
                 targetElement.append("<div class='iqb-error'>[43] must be tested with EqualsVerifier </div>")
                 targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
                 targetElement.css("background-color", "lightpink")
@@ -614,7 +618,7 @@ $(document).ready(function () {
         }
     }
 
-    $("button.iqb-find-public").click(function(e){
+    $("button.iqb-find-public").click(function (e) {
 
         addIqbReportForAnalyzer();
 
@@ -625,21 +629,21 @@ $(document).ready(function () {
         let codeLine = myjQuery("span.blob-code-inner");//[data-code-marker='+']
         let messaged = {};
 
-        codeLine.each((i,e)=>{
+        codeLine.each((i, e) => {
             let where = $(e).parents("div.file").find("div.file-header").attr("data-path");
             let file = where.substr(where.lastIndexOf("/") + 1);
 
-            let extension = file.substr(file.lastIndexOf(".")+1);
-            if (["java","ts", "css", "js","scss","html"].indexOf(extension) == -1){
+            let extension = file.substr(file.lastIndexOf(".") + 1);
+            if (["java", "ts", "css", "js", "scss", "html"].indexOf(extension) == -1) {
                 return;
             }
             let isJava = file.endsWith(".java");
 
-            if (["ts","js"].indexOf(extension) >=0){
+            if (["ts", "js"].indexOf(extension) >= 0) {
                 alertMethodInProduction(e);
                 noConsoleOnFrontend(e);
             }
-            if (["css","scss","html"].indexOf(extension) >=0) {
+            if (["css", "scss", "html"].indexOf(extension) >= 0) {
                 noImportant(e);
             }
 
@@ -660,8 +664,8 @@ $(document).ready(function () {
             noWhitebox(e)
 
             let targetElement = myjQuery(e);
-            let foundPublicMethod = isJava ? e.innerText.match(/public[^(]+\s(.+)\(.*/) :  e.innerText.match(/public\s(.+)\(.*/);
-            if ( foundPublicMethod ){
+            let foundPublicMethod = isJava ? e.innerText.match(/public[^(]+\s(.+)\(.*/) : e.innerText.match(/public\s(.+)\(.*/);
+            if (foundPublicMethod) {
                 processPublicMethod(foundPublicMethod, targetElement, messaged);
             }
         })
@@ -690,14 +694,14 @@ $(document).ready(function () {
             : myjQuery(`div#files div.file div.file-header[data-path*='Test.java'],div#files div.file div.file-header[data-path*='IT']`)
         let testLine = test.siblings(`div.js-file-content`).find(`span.blob-code-inner:contains('.${methodName}(')`);
 
-        let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
+        let expectedTestClass = isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
 
-        if (testLine.length > 0){
-            testLine.each((i, e)=>{
+        if (testLine.length > 0) {
+            testLine.each((i, e) => {
                 let targetElement = $(e);
                 let whereFound = targetElement.parents("div.file").find("div.file-header").attr("data-path");
-                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/")+1);
-                if (fileTestClass == expectedTestClass){
+                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/") + 1);
+                if (fileTestClass == expectedTestClass) {
                     testLine = targetElement;
                 }
             })
@@ -712,15 +716,15 @@ $(document).ready(function () {
             }
             targetElement.append(`<a target="_blank" class="iqb-open-test" href="${test.attr('data-path')}">[OpenTest]</a>`);
             targetElement.append(`<a href='#${fileNoExt}'>[GoToTest]</a>`)
-            let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
+            let expectedTestClass = isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
             if (testLine.length > 0) {
                 testLine.append(`<a class="iqb-a" name='${fileNoExt}-line'>H</a>`)
                 targetElement.append(`<a href='#${fileNoExt}-line'>[GoToLine]</a>`)
 
                 let whereFound = $(testLine).parents("div.file").find("div.file-header").attr("data-path");
-                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/")+1);
+                let fileTestClass = whereFound.substr(whereFound.lastIndexOf("/") + 1);
 
-                if (fileTestClass != expectedTestClass){
+                if (fileTestClass != expectedTestClass) {
                     targetElement.append(`<div class='iqb-error'>[18] Test Found in another class: ${fileTestClass} than expected: ${expectedTestClass}</div>`);
                     targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
                 }
@@ -730,7 +734,7 @@ $(document).ready(function () {
                 $("div.tabnav").append(`<div><a href="#iqb-method-${methodName}">[37]  no new UT added related to ${methodName} from ${fileNoExt} found while looking in ${fileNoExt}${isJs ? ".spec.ts" : "Test"}</a></div>`)
             }
         } else {
-            let expectedTestClass =  isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
+            let expectedTestClass = isJs ? `${fileNoExt}.spec.ts` : `${fileNoExt}Test.java`;
             targetElement.append(`<div class='iqb-error'>[37] no new UT found for method ${methodName} while searching in ${expectedTestClass}</div>`);
             targetElement.append("<button class='iqb-report-missing-ut'>Report</button>")
 
@@ -742,52 +746,55 @@ $(document).ready(function () {
         }
     }
 
-    function addIqbReportForAnalyzer(){
-        var els = $(`img[src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/1f6ab.png"],img[src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png"]`)
-        els.each((i,e)=>{
-            let targetElement =  $(e);
+    function addIqbReportForAnalyzer() {
+        var els = $(`img[src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png"], img[src="https://github.githubassets.com/images/icons/emoji/unicode/1f6ab.png"], img[src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png"]`)
+        els.each((i, e) => {
+            let targetElement = $(e);
             let message = targetElement.attr('title');
             let code = 51;
             //ignore some - for which we have better
-            if (message.indexOf("asdasd")>=0){
+            if (message.indexOf("asdasd") >= 0) {
                 return;
             }
 
-            if (message.indexOf("JS: Console.Log() in Production")>=0){
+            if (message.indexOf("JS: Console.Log() in Production") >= 0) {
                 code = 47;
             }
 
-            if (message.indexOf("JS: Redundant parentheses/ braces")>=0
-                 || message.indexOf("Unnecessary Braces Surrounding Annotation Parameter")>=0
-                 || message.indexOf("JS: Equal Margin/ Padding using 4 values")>=0
-                 || message.indexOf("JS: Object Literal Shorthand Syntax")>=0
-            ){
+            if (message.indexOf("JS: Redundant parentheses/ braces") >= 0
+                || message.indexOf("Unnecessary Braces Surrounding Annotation Parameter") >= 0
+                || message.indexOf("JS: Equal Margin/ Padding using 4 values") >= 0
+                || message.indexOf("JS: Object Literal Shorthand Syntax") >= 0
+                || message.indexOf("Unneeded toString() Invocation") >= 0
+            ) {
                 code = 23;
             }
-            if (message.indexOf("JS: Avoid loose equality/inequality")>=0
-                || message.indexOf("JS: String declaration with double quotes")>=0
-                || message.indexOf("JS: Prefer `Const` Instead of `Let` or `Var` (ES/TS/JS)")>=0
-                || message.indexOf("JS: Missing semicolon")>=0
-                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: There should be no space after")>=0
-                || message.indexOf("JS: Double Quotes in @import Statements")>=0
-                || message.indexOf("JS: String concatenation to build a string")>=0
-                || message.indexOf("JS: Missing Blank Line")>=0
-                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: Operator")>=0
-                || message.indexOf("JS: Formatting Spacing")>=0
-            ){
+            if (message.indexOf("JS: Avoid loose equality/inequality") >= 0
+                || message.indexOf("JS: String declaration with double quotes") >= 0
+                || message.indexOf("JS: Prefer `Const` Instead of `Let` or `Var` (ES/TS/JS)") >= 0
+                || message.indexOf("JS: Missing semicolon") >= 0
+                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: There should be no space after") >= 0
+                || message.indexOf("JS: Double Quotes in @import Statements") >= 0
+                || message.indexOf("JS: String concatenation to build a string") >= 0
+                || message.indexOf("JS: Missing Blank Line") >= 0
+                || message.indexOf("JS: Formatting Spacing - ES/TS/JS: Operator") >= 0
+                || message.indexOf("JS: Formatting Spacing") >= 0
+                || message.indexOf("Inconsistent Indentation and") >= 0
+            ) {
                 code = 18;
             }
 
-            if (message.indexOf("Unused Imports")>=0
-            ){
+            if (
+                message.indexOf("Unused Imports") >= 0
+            ) {
                 code = 22;
             }
 
             $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>Report</button>`);
 
-          $(e)  .parents("td")
-              .append(`<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>`)
-              .append(`[<a class="iqb-ui-view">V</a>]`)
+            $(e).parents("td")
+                .append(`<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>`)
+                .append(`[<a class="iqb-ui-view">V</a>]`)
 
         });
 
@@ -799,9 +806,9 @@ $(document).ready(function () {
         let code = targetElement.siblings("input").val()
 
         window.open(`https://confluence.devfactory.com/dosearchsite.action?queryString=${encodeURIComponent(message)}`)
-     });
+    });
 
-        myjQuery('body').on("click", "a.iqb-ui-add", function (e) {
+    myjQuery('body').on("click", "a.iqb-ui-add", function (e) {
         let targetElement = $(e.target);
         let message = targetElement.siblings("img").attr('title');
         let code = targetElement.siblings("input").val()
@@ -812,34 +819,34 @@ $(document).ready(function () {
         let position = targetElement.find("td.blob-code").find("button.js-add-line-comment").attr("data-position");
         let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
-        let firstPos = href.indexOf("blob/")+5;
-        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+        let firstPos = href.indexOf("blob/") + 5;
+        let commit_id = href.substr(firstPos, href.indexOf("/", firstPos + 1) - firstPos);
 
         $.ajax({
             url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
             type: "POST",
             headers: {
-                "Accept" : "application/vnd.github.comfort-fade-preview+json",
-                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
-                "Content-Type" : "application/json"
+                "Accept": "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                "Content-Type": "application/json"
             },
             data: JSON.stringify({
-                body : `${comment}`,
+                body: `${comment}`,
                 commit_id,
                 path,
-                line : parseInt(lineNo),
-                side : "RIGHT",
+                line: parseInt(lineNo),
+                side: "RIGHT",
                 //position: position,
                 //"start_side": "RIGHT",
                 //start_line: lineNo
 
             }),
-            dataType:"json",
+            dataType: "json",
             contentType: "application/json",
-            success: function( data, textStatus, jQxhr ){
+            success: function (data, textStatus, jQxhr) {
                 targetElement.append("<div>[ADDED]</div>")
             },
-            error: function( jqXhr, textStatus, errorThrown ){
+            error: function (jqXhr, textStatus, errorThrown) {
                 alert("failed to post")
             }
         })
@@ -855,34 +862,34 @@ $(document).ready(function () {
         let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
         let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
-        let firstPos = href.indexOf("blob/")+5;
-        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+        let firstPos = href.indexOf("blob/") + 5;
+        let commit_id = href.substr(firstPos, href.indexOf("/", firstPos + 1) - firstPos);
 
         $.ajax({
             url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
             type: "POST",
             headers: {
-                "Accept" : "application/vnd.github.comfort-fade-preview+json",
-                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
-                "Content-Type" : "application/json"
+                "Accept": "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                "Content-Type": "application/json"
             },
             data: JSON.stringify({
-                body : `${comment}`,
+                body: `${comment}`,
                 commit_id,
                 path,
-                line : parseInt(lineNo),
-                side : "RIGHT",
+                line: parseInt(lineNo),
+                side: "RIGHT",
                 //position: position,
                 //"start_side": "RIGHT",
                 //start_line: lineNo
 
             }),
-            dataType:"json",
+            dataType: "json",
             contentType: "application/json",
-            success: function( data, textStatus, jQxhr ){
+            success: function (data, textStatus, jQxhr) {
                 targetElement.append("<div>[ADDED UT MISSING]</div>")
             },
-            error: function( jqXhr, textStatus, errorThrown ){
+            error: function (jqXhr, textStatus, errorThrown) {
                 alert("failed to post")
             }
         })
@@ -895,8 +902,8 @@ $(document).ready(function () {
         let position = targetElement.parents("td.blob-code").find("button.js-add-line-comment").attr("data-position");
         let path = targetElement.parents("div.file").find("div.file-header").attr("data-path");
         let href = targetElement.parents("div.file").find("details-menu.dropdown-menu-sw a:first").attr("href");
-        let firstPos = href.indexOf("blob/")+5;
-        let commit_id = href.substr(firstPos,href.indexOf("/",firstPos+1)-firstPos);
+        let firstPos = href.indexOf("blob/") + 5;
+        let commit_id = href.substr(firstPos, href.indexOf("/", firstPos + 1) - firstPos);
 
         let comment = targetElement.siblings("div.iqb-error").text();
 
@@ -904,27 +911,27 @@ $(document).ready(function () {
             url: `https://api.github.com/repos/${user}/${repoName}/pulls/${no}/comments`,
             type: "POST",
             headers: {
-                "Accept" : "application/vnd.github.comfort-fade-preview+json",
-                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu")+":"+ getLocalStorageElement("gpa")),
-                "Content-Type" : "application/json"
+                "Accept": "application/vnd.github.comfort-fade-preview+json",
+                "Authorization": "Basic " + btoa(getLocalStorageElement("gpu") + ":" + getLocalStorageElement("gpa")),
+                "Content-Type": "application/json"
             },
             data: JSON.stringify({
-                body : `${comment}`,
+                body: `${comment}`,
                 commit_id,
                 path,
-                line : parseInt(lineNo),
-                side : "RIGHT",
+                line: parseInt(lineNo),
+                side: "RIGHT",
                 //position: position,
                 //"start_side": "RIGHT",
                 //start_line: lineNo
 
             }),
-            dataType:"json",
+            dataType: "json",
             contentType: "application/json",
-            success: function( data, textStatus, jQxhr ){
+            success: function (data, textStatus, jQxhr) {
                 targetElement.append("<div>[ADDED UT MISSING]</div>")
             },
-            error: function( jqXhr, textStatus, errorThrown ){
+            error: function (jqXhr, textStatus, errorThrown) {
                 alert("failed to post")
             }
         })
@@ -954,7 +961,7 @@ $(document).ready(function () {
         let textareaEl = myjQuery("textarea.comment-form-textarea",
             $(event.target).parents("tr.js-inline-comments-container"));
         if (!textareaEl.length)
-            textareaEl =  myjQuery("textarea",
+            textareaEl = myjQuery("textarea",
                 $(event.target).parents("div.TimelineItem"));
 
         textareaEl
@@ -965,7 +972,7 @@ $(document).ready(function () {
 
     myjQuery('body').on("click", "button.js-comment-edit-button", function (e) {
         let obj = $(e.target).parents("tr.js-inline-comments-container");
-        if (!obj.length){
+        if (!obj.length) {
             obj = $(e.target).parents("div.TimelineItem");
         }
         console.log($("div.inline-comment-form", obj));
@@ -980,10 +987,9 @@ $(document).ready(function () {
     })
 
 
-
     myjQuery('body').on("click", "button.review-thread-reply-button", function (e) {
         let obj = $(e.target).parents("tr.js-inline-comments-container");
-        if (!obj.length){
+        if (!obj.length) {
             obj = $(e.target).parents("div.TimelineItem");
         }
         console.log($("div.inline-comment-form", obj));
