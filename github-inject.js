@@ -790,7 +790,7 @@ $(document).ready(function () {
                 code = 22;
             }
 
-            $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message}</div><button class='iqb-report-missing-ut'>Report</button>`);
+            $(e).parents("tr").find("span.blob-code-inner").append(`<div class='iqb-error'>[${code}] ${message} https://confluence.devfactory.com/dosearchsite.action?queryString=${encodeURIComponent(message)}</div><button class='iqb-report-missing-ut'>Report</button>`);
 
             $(e).parents("td")
                 .append(`<input id='iqb-ui-val' value='${code}' size='2' /><a class='iqb-ui-add'>Add</a>`)
