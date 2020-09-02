@@ -645,18 +645,19 @@ $(document).ready(function () {
     }
 
     function jiveMobileVerify() {
-        existsElement(myjQuery("div.file div.file-header[data-path*='request.vtl']")) || log("[43] did not found request.vtl file")
-        existsElement(myjQuery("div.file div.file-header[data-path*='response.vtl']")) || log("[43] did not found response.vtl file")
-        existsElement(myjQuery("div.file div.file-header[data-path*='.tf']")) || log("[43] did not found terraform file")
-        existsElement(myjQuery("div.file div.file-header[data-path*='resolve.']")) || log("[43] did not found resolver tf (resolve.[type].[field].tf))")
-        existsElement(myjQuery("div.file div.file-header[data-path*='.graphql']")) || log("[43] did not found graphql file")
-        // TODO normalizer rule -
-        // normalizers in utils/fieldNormalizers
-        // normalizer should have Type.js naming convention
-        // normalizer should call parent normalizer
-        existsElement($("span.blob-code-inner:contains('common.addHandler')")) || log("[43] did not handler (common.addHandler statement)")
+        if (isJiveMobile()) {
+            existsElement(myjQuery("div.file div.file-header[data-path*='request.vtl']")) || log("[43] did not found request.vtl file")
+            existsElement(myjQuery("div.file div.file-header[data-path*='response.vtl']")) || log("[43] did not found response.vtl file")
+            existsElement(myjQuery("div.file div.file-header[data-path*='.tf']")) || log("[43] did not found terraform file")
+            existsElement(myjQuery("div.file div.file-header[data-path*='resolve.']")) || log("[43] did not found resolver tf (resolve.[type].[field].tf))")
+            existsElement(myjQuery("div.file div.file-header[data-path*='.graphql']")) || log("[43] did not found graphql file")
+            // TODO normalizer rule -
+            // normalizers in utils/fieldNormalizers
+            // normalizer should have Type.js naming convention
+            // normalizer should call parent normalizer
+            existsElement($("span.blob-code-inner:contains('common.addHandler')")) || log("[43] did not handler (common.addHandler statement)")
 
-
+        }
     }
 
     /**
