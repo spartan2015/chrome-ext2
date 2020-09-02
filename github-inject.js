@@ -298,6 +298,10 @@ $(document).ready(function () {
         return repoName == "jive-cloud-application";
     }
 
+    function isJiveMobile() {
+        return repoName == "jive-mobile-graphql";
+    }
+
     let rulesString = lookoutFor[repoName] ? lookoutFor[repoName].map(e => `<li>${e}</li>`).join("") : ""
     $("div.gh-header").append(`       
         <div style="background-color:lightpink">Repo: ${repoName} 
@@ -562,6 +566,18 @@ $(document).ready(function () {
         }
     }
 
+    function rethrowExceptions(e) {
+        if (isJive()) {
+            let targetElement = myjQuery(e);
+            let wildCard = e.innerText.match("throw .+")
+            if (wildCard) {
+                targetElement.append("<div class='iqb-error'>[43] When rethrowing exceptions, if appropriate wrap them with JiveException or JiveRuntimeException.</div>")
+                targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+                targetElement.css("background-color", "lightpink")
+            }
+        }
+    }
+
     function interruptedException(e) {
         let targetElement = myjQuery(e);
         let wildCard = e.innerText.indexOf("InterruptedException") >= 0
@@ -595,6 +611,16 @@ $(document).ready(function () {
         }
     }
 
+    function noNewLineAtEnd() {
+        let targetElement = myjQuery("svg.octicon-no-entry");
+        if (targetElement) {
+            let parent = targetElement.parents("td.blob-code");
+            parent.append("<div class='iqb-error'>[18] add new line at end of file </div>")
+            parent.append("<button class='iqb-report-error'>Report</button>")
+            parent.css("background-color", "lightpink")
+        }
+    }
+
     function hasEqualsVerifier(e) {
         let targetElement = myjQuery(e);
         let wildCard = targetElement.text().match(/public boolean (equals)/) || e.innerText.match(/public int (hashCode)/)
@@ -618,7 +644,40 @@ $(document).ready(function () {
         }
     }
 
+    function jiveMobileVerify() {
+        existsElement(myjQuery("div.file div.file-header[data-path*='request.vtl']")) || log("[43] did not found request.vtl file")
+        existsElement(myjQuery("div.file div.file-header[data-path*='response.vtl']")) || log("[43] did not found response.vtl file")
+        existsElement(myjQuery("div.file div.file-header[data-path*='.tf']")) || log("[43] did not found terraform file")
+        existsElement(myjQuery("div.file div.file-header[data-path*='resolve.']")) || log("[43] did not found resolver tf (resolve.[type].[field].tf))")
+        existsElement(myjQuery("div.file div.file-header[data-path*='.graphql']")) || log("[43] did not found graphql file")
+        // TODO normalizer rule -
+        // normalizers in utils/fieldNormalizers
+        // normalizer should have Type.js naming convention
+        // normalizer should call parent normalizer
+        existsElement($("span.blob-code-inner:contains('common.addHandler')")) || log("[43] did not handler (common.addHandler statement)")
+
+
+    }
+
+    /**
+     *
+     * @param eq jquery selector
+     * @returns {boolean|boolean}
+     */
+    function existsElement(eq) {
+        return eq != null && eq.length >= 0
+    }
+
+    function log(m) {
+        $("div.tabnav").append(m);
+    }
+
+
     $("button.iqb-find-public").click(function (e) {
+
+        noNewLineAtEnd();
+
+        jiveMobileVerify()
 
         addIqbReportForAnalyzer();
 
@@ -766,6 +825,9 @@ $(document).ready(function () {
                 || message.indexOf("JS: Equal Margin/ Padding using 4 values") >= 0
                 || message.indexOf("JS: Object Literal Shorthand Syntax") >= 0
                 || message.indexOf("Unneeded toString() Invocation") >= 0
+                || message.indexOf("Redundant  \"value\" Attribute of Annotation") >= 0
+                || message.indexOf("JS: Redundant async keyword") >= 0
+                || message.indexOf("JS: Use Object Method Shorthand") >= 0
             ) {
                 code = 23;
             }
@@ -780,6 +842,16 @@ $(document).ready(function () {
                 || message.indexOf("JS: Formatting Spacing - ES/TS/JS: Operator") >= 0
                 || message.indexOf("JS: Formatting Spacing") >= 0
                 || message.indexOf("Inconsistent Indentation and") >= 0
+                || message.indexOf("Too Long Line of Code") >= 0
+                || message.indexOf("Use \"L\", \"F (f)\", \"D (d)\" Suffix For \"long, float, double\"") >= 0
+                || message.indexOf("JS: Redundant Blank Line") >= 0
+                || message.indexOf("LOGGER / LOG / Logger / Log - Capitalized Names") >= 0
+                || message.indexOf("Avoid Wildcards (*) in Imports") >= 0
+                || message.indexOf("Random Blank Lines") >= 0
+                || message.indexOf("Not Separated Static and Class Instance Fields") >= 0
+                || message.indexOf("JS: Non Standard Naming Conventions") >= 0
+                || message.indexOf("JS: Groups of imports are not delineated by blank liness") >= 0
+                || message.indexOf("JS: Use Object Method Shorthand") >= 0
             ) {
                 code = 18;
             }
