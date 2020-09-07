@@ -441,7 +441,7 @@ $(document).ready(function () {
 
     function noConsoleOnFrontend(e) {
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.match(/console\.log|console\.error/);
+        let wildCard = e.innerText.match(/console\.log|console\.error/) && !isLambdaFile(e);
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[47]\tNo console logs are found on javascript-based code, that are visible/available to end users</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -660,6 +660,16 @@ $(document).ready(function () {
         }
     }
 
+    function getFile(e){
+        let where = $(e).parents("div.file").find("div.file-header").attr("data-path");
+        let file = where.substr(where.lastIndexOf("/") + 1);
+        return file;
+    }
+
+    function isLambdaFile(e){
+        return getFile().indexOf("lambda")!=-1;
+    }
+
     /**
      *
      * @param eq jquery selector
@@ -829,6 +839,10 @@ $(document).ready(function () {
                 || message.indexOf("Redundant  \"value\" Attribute of Annotation") >= 0
                 || message.indexOf("JS: Redundant async keyword") >= 0
                 || message.indexOf("JS: Use Object Method Shorthand") >= 0
+                || message.indexOf("Superfluous `this.`") >= 0
+                || message.indexOf("Unnecessary Comparison in Boolean Expression") >= 0
+                || message.indexOf("Redundant Call to \"super()\" in Constructor") >= 0
+                || message.indexOf("Unnecessary Fully Qualified Name (") >= 0
             ) {
                 code = 23;
             }
