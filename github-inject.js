@@ -611,6 +611,16 @@ $(document).ready(function () {
         }
     }
 
+    function reverseNull(e) {
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match(/==\s*null/)
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[18] reverse null comparison</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function noNewLineAtEnd() {
         let targetElement = myjQuery("svg.octicon-no-entry");
         if (targetElement) {
@@ -646,20 +656,33 @@ $(document).ready(function () {
 
     function jiveMobileVerify() {
         if (isJiveMobile()) {
-            existsElement(myjQuery("div.file div.file-header[data-path*='request.vtl']")) || log("[43] did not found request.vtl file")
-            existsElement(myjQuery("div.file div.file-header[data-path*='response.vtl']")) || log("[43] did not found response.vtl file")
+            let request = myjQuery("div.file div.file-header[data-path*='request.vtl']");
+            (existsElement(request) && matches(request,/[^\.]+\.[^\.]+\.request\.vtl/,"Must match: type.field.request.vtl")) || log("[43] did not found request.vtl file")
+
+            let response = myjQuery("div.file div.file-header[data-path*='response.vtl']");
+            existsElement((response) && matches(response,/[^\.]+\.[^\.]+\.response\.vtl/,"Must match: type.field.response.vtl")) || log("[43] did not found response.vtl file")
             existsElement(myjQuery("div.file div.file-header[data-path*='.tf']")) || log("[43] did not found terraform file")
-            existsElement(myjQuery("div.file div.file-header[data-path*='resolve.']")) || log("[43] did not found resolver tf (resolve.[type].[field].tf))")
+
+            let resolver = myjQuery("div.file div.file-header[data-path*='resolver.']");
+            (existsElement(resolver) &&
+                (resolver.attr("data-path").match(/resolver\.[^\.]+\.[^\.]+\.tf/) || log(`[43] resolver tf file does not match resolver.type.field.tf: : ${resolver.attr("data-path")}`))
+            ) || log(`[43] did not found resolver tf (resolver.[type].[field].tf))`)
+
             existsElement(myjQuery("div.file div.file-header[data-path*='.graphql']")) || log("[43] did not found graphql file")
             // TODO normalizer rule -
             // normalizers in utils/fieldNormalizers
             // normalizer should have Type.js naming convention
             // normalizer should call parent normalizer
-            existsElement($("span.blob-code-inner:contains('common.addHandler')")) || log("[43] did not handler (common.addHandler statement)")
+            existsElement($("span.blob-code-inner:contains('common.addHandler')"))
+            || existsElement($("span.blob-code-inner:contains('implements Handler')"))
+            || log("[43] did find the handler implementation")
 
         }
     }
-
+function matches(fileSelector, expression, messageError){
+    if (!fileSelector || fileSelector.length ==0) return false;
+    return fileSelector.attr("data-path").match(expression) || log(`[43] ${messageError}: ${fileSelector.attr("data-path")}`)
+}
     function getFile(e){
         let where = $(e).parents("div.file").find("div.file-header").attr("data-path");
         let file = where.substr(where.lastIndexOf("/") + 1);
@@ -667,7 +690,7 @@ $(document).ready(function () {
     }
 
     function isLambdaFile(e){
-        return getFile().indexOf("lambda")!=-1;
+        return getFile().indexOf("lambda")!=-1 && getFile().indexOf("backend")!=-1;
     }
 
     /**
@@ -676,11 +699,11 @@ $(document).ready(function () {
      * @returns {boolean|boolean}
      */
     function existsElement(eq) {
-        return eq != null && eq.length >= 0
+        return eq != null && eq.length >= 1
     }
 
     function log(m) {
-        $("div.tabnav").append(m);
+        $("div.tabnav").append(`<div>${m}</div>`);
     }
 
 
@@ -718,6 +741,7 @@ $(document).ready(function () {
             }
 
             magicNumbers(e);
+            reverseNull(e);
             commentedCode(e);
             noLogWarnOrDebug(e)
             hasEqualsVerifier(e);
@@ -867,6 +891,7 @@ $(document).ready(function () {
                 || message.indexOf("JS: Non Standard Naming Conventions") >= 0
                 || message.indexOf("JS: Groups of imports are not delineated by blank liness") >= 0
                 || message.indexOf("JS: Use Object Method Shorthand") >= 0
+                || message.indexOf("JS: Avoid Nested Ternary Expressions") >= 0
             ) {
                 code = 18;
             }
