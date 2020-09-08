@@ -253,7 +253,8 @@ $(document).ready(function () {
         ],
         "devfactory-codeserver-framework": [
             "LOTS OF PCA REJECTIONS - CHECK checklist PCA rules always!",
-            "method visibility order"
+            "method visibility order",
+            "one SECRET per qa env"
         ],
         "aurea-jivecloud-jivedaily-reactnative": [
             "Allows dangling comma"
@@ -296,6 +297,10 @@ $(document).ready(function () {
 
     function isJive() {
         return repoName == "jive-cloud-application";
+    }
+
+    function isCodeServer() {
+        return repoName == "devfactory-codeserver-framework";
     }
 
     function isJiveMobile() {
@@ -444,6 +449,17 @@ $(document).ready(function () {
         let wildCard = e.innerText.match(/console\.log|console\.error/) && !isLambdaFile(e);
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[47]\tNo console logs are found on javascript-based code, that are visible/available to end users</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
+    function oneSecret(e) {
+        if (!isCodeServer()) return;
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match(/secret/gi);
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[43] add one secret per env (dev,qa,etc)</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
             targetElement.css("background-color", "lightpink")
         }
@@ -621,9 +637,20 @@ $(document).ready(function () {
         }
     }
 
+    function useChar(e) {
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match(/".{1,1}"/) || e.innerText.match(/"\\n"/) || e.innerText.match(/"\\r"/)
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[18] single char - use char with '' instead of string with \"\"</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function reverseConstantComparison(e) {
         let targetElement = myjQuery(e);
-        let wildCard = e.innerText.match(/==\s*\d+/) || e.innerText.match(/==\s*"/) || e.innerText.match(/==\s*'/)
+        let wildCard = e.innerText.match(/==\s*\d+/) || e.innerText.match(/==\s*"/) || e.innerText.match(/!=\s*'/)
+            || e.innerText.match(/!=\s*\d+/) || e.innerText.match(/!=\s*"/) || e.innerText.match(/==\s*'/)
         if (wildCard) {
             targetElement.append("<div class='iqb-error'>[18] reverse comparison with constant/literal</div>")
             targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
@@ -751,6 +778,8 @@ function matches(fileSelector, expression, messageError){
             }
 
             magicNumbers(e);
+            useChar(e);
+            oneSecret(e);
             reverseNull(e);
             reverseConstantComparison(e);
             commentedCode(e);
