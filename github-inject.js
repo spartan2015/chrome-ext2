@@ -621,6 +621,16 @@ $(document).ready(function () {
         }
     }
 
+    function reverseConstantComparison(e) {
+        let targetElement = myjQuery(e);
+        let wildCard = e.innerText.match(/==\s*\d+/) || e.innerText.match(/==\s*"/) || e.innerText.match(/==\s*'/)
+        if (wildCard) {
+            targetElement.append("<div class='iqb-error'>[18] reverse comparison with constant/literal</div>")
+            targetElement.append("<button class='iqb-report-error'>ReportIqbError</button>")
+            targetElement.css("background-color", "lightpink")
+        }
+    }
+
     function noNewLineAtEnd() {
         let targetElement = myjQuery("svg.octicon-no-entry");
         if (targetElement) {
@@ -742,6 +752,7 @@ function matches(fileSelector, expression, messageError){
 
             magicNumbers(e);
             reverseNull(e);
+            reverseConstantComparison(e);
             commentedCode(e);
             noLogWarnOrDebug(e)
             hasEqualsVerifier(e);
